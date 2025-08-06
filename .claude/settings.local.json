@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__brave-search__brave_web_search",
+      "WebFetch(domain:langchain-ai.github.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:changelog.langchain.com)",
+      "WebFetch(domain:ai.google.dev)",
+      "Bash(source:*)",
+      "Bash(pip --version)",
+      "Bash(pip install:*)",
+      "Bash(pip index versions:*)",
+      "Bash(pytest:*)"
+    ],
+    "deny": []
+  }
+}
