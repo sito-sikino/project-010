@@ -25,7 +25,7 @@ class TestScheduler:
             'DISCORD_CHANNEL_ID': '123456789012345678'
         }, clear=False):
             from main import DiscordIdeaBot
-            from settings import POSTING_INTERVAL
+            from settings import POSTING_INTERVAL_MINUTES
             
             bot = DiscordIdeaBot()
             
@@ -37,7 +37,7 @@ class TestScheduler:
             assert task is not None
             
             # 間隔設定確認 (10分)
-            assert task.minutes == POSTING_INTERVAL
+            assert task.minutes == POSTING_INTERVAL_MINUTES
             
             # タスクが開始可能状態であることを確認
             assert hasattr(task, 'start')
@@ -60,11 +60,12 @@ class TestScheduler:
             
             # 各段階をモック化
             test_notes = ["テストノート1", "テストノート2"]
+            test_titles = ["note1.md", "note2.md"]
             test_idea = "生成されたテストアイデア"
             
             # GitHub API モック
             with patch.object(bot, 'get_random_notes', new_callable=AsyncMock) as mock_get_notes:
-                mock_get_notes.return_value = test_notes
+                mock_get_notes.return_value = (test_notes, test_titles)
                 
                 # Gemini API モック  
                 with patch.object(bot, 'generate_idea', new_callable=AsyncMock) as mock_generate:
@@ -77,7 +78,7 @@ class TestScheduler:
                         
                         # 各段階が正しい順序で呼ばれることを確認
                         mock_get_notes.assert_called_once()
-                        mock_generate.assert_called_once_with(test_notes)
+                        mock_generate.assert_called_once_with(test_notes, test_titles)
                         mock_post.assert_called_once_with(test_idea)
 
     @pytest.mark.asyncio
@@ -120,7 +121,7 @@ class TestScheduler:
             'DISCORD_CHANNEL_ID': '123456789012345678'
         }, clear=False):
             from main import DiscordIdeaBot
-            from settings import POSTING_INTERVAL
+            from settings import POSTING_INTERVAL_MINUTES
             
             bot = DiscordIdeaBot()
             
@@ -128,7 +129,7 @@ class TestScheduler:
             task = bot.generate_and_post_idea
             
             # 10分設定の確認
-            assert task.minutes == POSTING_INTERVAL
+            assert task.minutes == POSTING_INTERVAL_MINUTES
             
             # タスクの基本設定確認
             assert not task.is_running()  # 初期状態では停止

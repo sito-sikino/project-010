@@ -7,7 +7,7 @@ Fail-Fast原則に基づく例外管理とカスタムエラー処理
 
 import discord
 from discord.ext import commands, tasks
-from settings import DISCORD_BOT_TOKEN, GITHUB_TOKEN, OBSIDIAN_REPO_OWNER, OBSIDIAN_REPO_NAME, RANDOM_NOTES_COUNT, GEMINI_API_KEY, IDEA_MAX_LENGTH, DISCORD_CHANNEL_ID, POSTING_INTERVAL
+from settings import DISCORD_BOT_TOKEN, GITHUB_TOKEN, OBSIDIAN_REPO_OWNER, OBSIDIAN_REPO_NAME, RANDOM_NOTES_COUNT, GEMINI_API_KEY, IDEA_MAX_LENGTH, DISCORD_CHANNEL_ID, POSTING_INTERVAL_MINUTES, TARGET_FOLDER
 import logging
 from typing import Optional, List
 from github import Github
@@ -16,10 +16,27 @@ import google.genai as genai
 import time
 
 
-# 構造化ログ設定
+# 構造化ログ設定（ファイル出力追加）
+import logging.handlers
+
+# ログディレクトリ作成
+import os
+log_dir = "logs"
+os.makedirs(log_dir, exist_ok=True)
+
+# ファイルハンドラーとコンソールハンドラーの設定
+file_handler = logging.FileHandler(f'{log_dir}/discord_bot.log', encoding='utf-8')
+console_handler = logging.StreamHandler()
+
+# フォーマッター設定
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+
+# ルートロガー設定
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    handlers=[file_handler, console_handler]
 )
 logger = logging.getLogger(__name__)
 
@@ -115,20 +132,51 @@ class DiscordIdeaBot(commands.Bot):
         # Fail-Fast: 重大なエラー時は即座に停止
         await self.close()
 
+    def _get_folder_markdown_files(self, repo, folder_path: str) -> List:
+        """
+        指定フォルダからMarkdownファイルを取得
+        
+        Args:
+            repo: GitHub リポジトリオブジェクト
+            folder_path: 対象フォルダパス (例: "20_Literature")
+            
+        Returns:
+            List: Markdownファイルのリスト
+        """
+        markdown_files = []
+        try:
+            logger.info(f"📂 Searching in folder: {folder_path}")
+            contents = repo.get_contents(folder_path)
+            
+            if isinstance(contents, list):
+                for content in contents:
+                    if content.type == 'file' and content.name.endswith(('.md', '.markdown')):
+                        markdown_files.append(content)
+                        logger.debug(f"   📝 Found: {content.name}")
+            else:
+                # 単一ファイルの場合
+                if contents.name.endswith(('.md', '.markdown')):
+                    markdown_files.append(contents)
+                    
+        except Exception as e:
+            logger.warning(f"⚠️  Could not access folder '{folder_path}': {e}")
+            
+        return markdown_files
+
     def _filter_markdown_files(self, files) -> List:
-        """Markdownファイルをフィルタリング"""
+        """Markdownファイルをフィルタリング（互換性保持）"""
         markdown_files = []
         for file in files:
             if file.type == 'file' and file.name.endswith(('.md', '.markdown')):
                 markdown_files.append(file)
         return markdown_files
 
-    async def get_random_notes(self) -> List[str]:
+    async def get_random_notes(self) -> tuple[List[str], List[str]]:
         """
         GitHub API経由でランダムObsidianノート取得
         
         Returns:
-            List[str]: 取得したMarkdownノートの内容リスト
+            tuple[List[str], List[str]]: (取得したMarkdownノートの内容リスト, ファイル名リスト)
             
         Raises:
             GitHubAPIError: GitHub API関連エラー
@@ -139,25 +187,33 @@ class DiscordIdeaBot(commands.Bot):
             # リポジトリ取得
             repo = self.github_client.get_repo(f"{self.repo_owner}/{self.repo_name}")
             
-            # 全ファイル一覧取得
-            all_files = repo.get_contents("")
-            logger.info(f"📄 Found {len(all_files)} total files")
-            
-            # Markdownファイルフィルタリング
-            markdown_files = self._filter_markdown_files(all_files)
-            logger.info(f"🔍 Filtered to {len(markdown_files)} markdown files")
+            # 指定フォルダからMarkdownファイル取得
+            if TARGET_FOLDER:
+                markdown_files = self._get_folder_markdown_files(repo, TARGET_FOLDER)
+                logger.info(f"📝 Found {len(markdown_files)} markdown files in '{TARGET_FOLDER}' folder")
+            else:
+                # フォルダ指定なしの場合はルートのみ検索（従来動作）
+                all_files = repo.get_contents("")
+                markdown_files = self._filter_markdown_files(all_files)
+                logger.info(f"📝 Found {len(markdown_files)} markdown files in root")
             
             if len(markdown_files) == 0:
-                logger.warning("⚠️  No markdown files found in repository")
-                return []
+                target_info = f" in '{TARGET_FOLDER}' folder" if TARGET_FOLDER else " in repository"
+                logger.warning(f"⚠️  No markdown files found{target_info}")
+                return [], []
             
             # 取得数を調整
             count = min(RANDOM_NOTES_COUNT, len(markdown_files))
             selected_files = random.sample(markdown_files, count)
             logger.info(f"🎲 Selected {count} random files")
             
+            # 選択されたファイル名をログに記録
+            for i, file in enumerate(selected_files):
+                logger.info(f"📄 File {i+1}: {file.name} ({file.size} bytes)")
+            
             # ファイル内容取得（サイズ制限付き）
             notes = []
+            note_titles = []
             for file in selected_files:
                 try:
                     # ファイルサイズチェック（1MB制限）
@@ -167,7 +223,8 @@ class DiscordIdeaBot(commands.Bot):
                     
                     content = file.decoded_content.decode('utf-8')
                     notes.append(content)
-                    logger.debug(f"✅ Loaded: {file.name} ({len(content)} chars)")
+                    note_titles.append(file.name)
+                    logger.info(f"✅ Loaded: {file.name} ({len(content)} chars)")
                     
                 except UnicodeDecodeError:
                     logger.warning(f"⚠️  Skipping binary file: {file.name}")
@@ -178,7 +235,7 @@ class DiscordIdeaBot(commands.Bot):
                     continue
             
             logger.info(f"🎯 Successfully loaded {len(notes)} notes")
-            return notes
+            return notes, note_titles
             
         except Exception as e:
             error_msg = f"Failed to get random notes from GitHub: {e}"
@@ -187,42 +244,56 @@ class DiscordIdeaBot(commands.Bot):
 
     def _format_idea_prompt(self, notes: List[str]) -> str:
         """
-        アイデア生成プロンプト整形
+        完全オリジナル創作要素生成プロンプト整形
+        
+        既存作品分析から抽象化→醸成→完全オリジナル構築のプロセスを実行
+        既存の固有名詞を一切使用せず、ログライン・世界観・主要キャラクター(最大3名)を500文字で生成
         
         Args:
-            notes: Obsidianノート断片のリスト
+            notes: Obsidianノート断片のリスト（既存作品分析情報）
             
         Returns:
-            str: 整形されたGeminiプロンプト
+            str: 抽象化→醸成→完全オリジナル創造プロセス指定のGeminiプロンプト
         """
-        # ノート断片を整形・結合
-        notes_text = "\n\n---\n\n".join(notes[:5])  # 最大5件に制限
+        # ノート断片を整形・結合（全量処理でGemini 2.0の大容量活用）
+        notes_text = "\n\n---\n\n".join(notes[:5])  # 最大5件の既存作品分析データ
         
-        prompt = f"""あなたは創作物語のアイデア生成の専門家です。以下のObsidianノート断片を参考に、魅力的な物語コンセプトを1つ生成してください。
+        prompt = f"""以下のObsidianノート情報を参考に、完全オリジナルな物語の基礎コンセプト案を1つ生成してください。
 
 【ノート断片】
 {notes_text}
 
+【重要：抽象化プロセス】
+1. 各ノート断片から「テーマ・世界観・ストーリー・モチーフ・象徴体系・備考」情報を抽出
+2. 抽出した要素を抽象化して自由に再構築し、全く新しい世界観・設定・キャラクターを創造
+
 【生成ルール】
-✅ 物語の核となる独創的なアイデア・コンセプトを提示
-✅ 複数のノート要素を創造的に組み合わせて発展
-✅ 読者の興味を引く具体的な設定・キャラクター・世界観を含む
+✅ 既存作品の固有名詞・キャラクター・概念・組織名は絶対に使用しない
+✅ 抽象化された概念から独創的な新要素を創造
+✅ 完全オリジナルのログライン・世界観・キャラクターを構築
 ✅ 簡潔で魅力的な日本語（{IDEA_MAX_LENGTH}文字以内）
-✅ 「〜物語」「〜の話」などの決まり文句を避け、直接的な表現で
 
 【出力フォーマット】
-物語アイデア：[ここに生成されたアイデアを記述]
+**ログライン**：[1行で物語の核心を表現]
 
-物語アイデア："""
+**世界観**：[独創的な舞台設定・時代背景]
+
+**主要キャラクター**：
+1. [主人公の名前・設定・動機]
+2. [重要キャラ2の名前・役割・特徴]  
+3. [重要キャラ3の名前・役割・対立軸]
+
+**ログライン**："""
         
         return prompt
 
-    async def generate_idea(self, notes: List[str]) -> str:
+    async def generate_idea(self, notes: List[str], note_titles: List[str]) -> str:
         """
         Gemini API経由でアイデア生成
         
         Args:
             notes: Obsidianノート断片のリスト
+            note_titles: ノートファイル名のリスト
             
         Returns:
             str: 生成された創作アイデア
@@ -237,9 +308,14 @@ class DiscordIdeaBot(commands.Bot):
             
             logger.info(f"🧠 Generating idea from {len(notes)} notes")
             
+            # 使用ノート詳細をログに記録（タイトル付き）
+            for i, (note, title) in enumerate(zip(notes, note_titles)):
+                logger.info(f"📝 Note {i+1}: {title} ({len(note)} chars)")
+            
             # プロンプト整形
             prompt = self._format_idea_prompt(notes)
-            logger.debug(f"Generated prompt: {len(prompt)} characters")
+            logger.info(f"📋 Generated prompt: {len(prompt)} characters")
+            logger.debug(f"📋 Full prompt content: {prompt}")
             
             # Gemini API呼び出し
             response = self.gemini_client.models.generate_content(
@@ -271,6 +347,11 @@ class DiscordIdeaBot(commands.Bot):
                 idea = idea[:IDEA_MAX_LENGTH - 3] + "..."
             
             logger.info(f"✨ Successfully generated idea: {len(idea)} characters")
+            logger.info(f"💡 Generated content: {idea}")
+            
+            # 生成コンセプトのログ記録
+            logger.info(f"📖 Generated story concept: {idea[:200]}{'...' if len(idea) > 200 else ''}")
+            
             return idea
             
         except Exception as e:
@@ -389,7 +470,7 @@ class DiscordIdeaBot(commands.Bot):
             
             raise DiscordAPIError(error_msg) from e
 
-    @tasks.loop(minutes=POSTING_INTERVAL)
+    @tasks.loop(minutes=POSTING_INTERVAL_MINUTES)
     async def generate_and_post_idea(self) -> None:
         """
         統合フロー: GitHub→Gemini→Discord
@@ -407,19 +488,19 @@ class DiscordIdeaBot(commands.Bot):
         current_loop = self.generate_and_post_idea.current_loop + 1
         
         try:
-            logger.info(f"🔄 Starting scheduled flow #{current_loop} (interval: {POSTING_INTERVAL}min)")
+            logger.info(f"🔄 Starting scheduled flow #{current_loop} (interval: {POSTING_INTERVAL_MINUTES}min)")
             
             # 段階1: GitHub API - ランダムノート取得
             step1_start = time.time()
             logger.info("📁 Phase 1/3: Fetching random notes from GitHub...")
-            notes = await self.get_random_notes()
+            notes, note_titles = await self.get_random_notes()
             step1_time = time.time() - step1_start
             logger.info(f"✅ Phase 1 completed: {len(notes)} notes loaded ({step1_time:.2f}s)")
             
             # 段階2: Gemini API - アイデア生成
             step2_start = time.time()
             logger.info("🧠 Phase 2/3: Generating creative idea with Gemini...")
-            idea = await self.generate_idea(notes)
+            idea = await self.generate_idea(notes, note_titles)
             step2_time = time.time() - step2_start
             logger.info(f"✅ Phase 2 completed: {len(idea)} chars idea generated ({step2_time:.2f}s)")
             
@@ -469,14 +550,15 @@ class DiscordIdeaBot(commands.Bot):
         
         logger.info("🚀 Bot ready state confirmed, starting scheduled task setup")
         logger.info(f"⚙️  Scheduler configuration:")
-        logger.info(f"   - Interval: {POSTING_INTERVAL} minutes")
+        logger.info(f"   - Interval: {POSTING_INTERVAL_MINUTES} minutes")
         logger.info(f"   - Random notes count: {RANDOM_NOTES_COUNT}")
         logger.info(f"   - Idea max length: {IDEA_MAX_LENGTH} chars")
         logger.info(f"   - Target Discord channel: {DISCORD_CHANNEL_ID}")
+        logger.info(f"   - Target folder: {TARGET_FOLDER if TARGET_FOLDER else 'Repository root'}")
         
         # 初回実行通知
         logger.info("🎯 First scheduled execution will begin shortly...")
-        logger.info(f"📅 Subsequent executions every {POSTING_INTERVAL} minutes")
+        logger.info(f"📅 Subsequent executions every {POSTING_INTERVAL_MINUTES} minutes")
 
 
 def main() -> None:

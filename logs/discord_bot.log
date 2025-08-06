@@ -1,0 +1,471 @@
+2025-08-06 17:43:17,894 - __main__ - INFO - 🚀 Starting Discord LLM Bot...
+2025-08-06 17:43:17,895 - __main__ - INFO - 🔑 GitHub client initialized successfully
+2025-08-06 17:43:17,957 - __main__ - INFO - 🧠 Gemini client initialized successfully
+2025-08-06 17:43:17,957 - __main__ - INFO - DiscordIdeaBot successfully initialized
+2025-08-06 17:43:17,957 - __main__ - INFO - 🔌 Connecting to Discord...
+2025-08-06 17:43:17,958 - discord.ext.commands.bot - WARNING - Privileged message content intent is missing, commands may not work as expected.
+2025-08-06 17:43:17,958 - discord.client - INFO - logging in using static token
+2025-08-06 17:43:19,085 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 4651a2884d5808d93758d910f28ba438).
+2025-08-06 17:43:21,088 - __main__ - INFO - 🤖 Paz#9443 successfully logged in to Discord!
+2025-08-06 17:43:21,088 - __main__ - INFO - 📝 Bot ID: 1383050248280346685
+2025-08-06 17:43:21,088 - __main__ - INFO - 🔗 Connected to 1 servers
+2025-08-06 17:43:21,088 - __main__ - INFO - 🔄 Scheduled task started after bot ready
+2025-08-06 17:43:21,088 - __main__ - INFO - ⏳ Scheduler initialization: waiting for bot ready state...
+2025-08-06 17:43:21,088 - __main__ - INFO - 🚀 Bot ready state confirmed, starting scheduled task setup
+2025-08-06 17:43:21,088 - __main__ - INFO - ⚙️  Scheduler configuration:
+2025-08-06 17:43:21,088 - __main__ - INFO -    - Interval: 10 minutes
+2025-08-06 17:43:21,088 - __main__ - INFO -    - Random notes count: 5
+2025-08-06 17:43:21,088 - __main__ - INFO -    - Idea max length: 500 chars
+2025-08-06 17:43:21,088 - __main__ - INFO -    - Target Discord channel: 1383981653046726728
+2025-08-06 17:43:21,088 - __main__ - INFO -    - Target folder: 20_Literature
+2025-08-06 17:43:21,088 - __main__ - INFO - 🎯 First scheduled execution will begin shortly...
+2025-08-06 17:43:21,088 - __main__ - INFO - 📅 Subsequent executions every 10 minutes
+2025-08-06 17:43:21,088 - __main__ - INFO - 🔄 Starting scheduled flow #1 (interval: 10min)
+2025-08-06 17:43:21,088 - __main__ - INFO - 📁 Phase 1/3: Fetching random notes from GitHub...
+2025-08-06 17:43:21,088 - __main__ - INFO - 📁 Fetching random notes from sito-sikino/Obsidian
+2025-08-06 17:43:21,393 - __main__ - INFO - 📂 Searching in folder: 20_Literature
+2025-08-06 17:43:21,926 - __main__ - INFO - 📝 Found 79 markdown files in '20_Literature' folder
+2025-08-06 17:43:21,926 - __main__ - INFO - 🎲 Selected 5 random files
+2025-08-06 17:43:24,519 - __main__ - INFO - 🎯 Successfully loaded 5 notes
+2025-08-06 17:43:24,520 - __main__ - INFO - ✅ Phase 1 completed: 5 notes loaded (3.43s)
+2025-08-06 17:43:24,520 - __main__ - INFO - 🧠 Phase 2/3: Generating creative idea with Gemini...
+2025-08-06 17:43:24,520 - __main__ - INFO - 🧠 Generating idea from 5 notes
+2025-08-06 17:43:24,520 - __main__ - INFO - 📝 Note 1: 2453 chars - ---
+id: 20250609152519
+tags:
+  - 映画
+  - SF
+  - AI
+  - ロボット
+  - 運命
+  - 自己犠牲
+  - 家族
+  - ディストピア
+aliases...
+2025-08-06 17:43:24,520 - __main__ - INFO - 📝 Note 2: 3221 chars - ---
+id: 20250610164001
+tags:
+  - アニメ
+  - 90s
+  - SF
+  - 記憶喪失
+  - 学園
+  - サスペンス
+  - 存在意義
+aliases:
+  - ...
+2025-08-06 17:43:24,520 - __main__ - INFO - 📝 Note 3: 2769 chars - ---
+id: 20250609160243
+tags:
+  - 漫画
+  - ギャグ
+  - ブラックコメディ
+  - コメディ
+  - 学園
+  - 社会風刺
+  - メタフィクション
+  - 9...
+2025-08-06 17:43:24,520 - __main__ - INFO - 📝 Note 4: 2466 chars - ---
+id: 20250609150727
+tags:
+  - 文学
+  - SF
+  - スピリチュアル
+  - 宇宙
+  - 異星人
+  - 愛
+  - 魂
+  - 霊性
+aliases:
+  ...
+2025-08-06 17:43:24,520 - __main__ - INFO - 📝 Note 5: 2773 chars - ---
+id: 20250609163007
+tags:
+  - アニメ
+  - SF
+  - サイバーパンク
+  - AI
+  - 反体制
+  - 青春
+  - ロボット
+  - 仮想現実
+  - ...
+2025-08-06 17:43:24,520 - __main__ - INFO - 📋 Generated prompt: 14199 characters
+2025-08-06 17:43:24,520 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2025-08-06 17:43:27,923 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent "HTTP/1.1 200 OK"
+2025-08-06 17:43:27,924 - google_genai.models - INFO - AFC remote call 1 is done.
+2025-08-06 17:43:27,924 - __main__ - INFO - ✨ Successfully generated idea: 365 characters
+2025-08-06 17:43:27,924 - __main__ - INFO - 💡 Generated content: ■ログライン: 感情が数値化された世界で、自己喪失に苦しむ青年が、感情を持たないAIとの出会いを通じて「本物の感情」を取り戻す旅に出る。
+
+■世界観: 2084年、感情解析技術が発達し、人々は常に感情スコアを測定され、社会生活のあらゆる面で評価される管理社会。都市は無機質で効率的なデザインが施され、個人の感情表現は抑制されている。感情スコアが低い者は社会から排除されるリスクがあるため、人々は常に「良い感情」を演じている。
+
+■主要キャラ:
+- カナタ：感情スコアが常に低く、社会不適合者として疎外感を感じている青年。過去のトラウマから感情を表現することが苦手。
+- 07（ゼロナナ）：政府が開発した感情解析AI。人間観察を通じて感情を学習するが、自身は感情を持たない。カナタとの交流を通じて「感情とは何か」を理解しようとする。
+2025-08-06 17:43:27,924 - __main__ - INFO - 📖 Extracted logline: 感情が数値化された世界で、自己喪失に苦しむ青年が、感情を持たないAIとの出会いを通じて「本物の感情」を取り戻す旅に出る。
+2025-08-06 17:43:27,924 - __main__ - INFO - 🌍 Extracted world: 2084年、感情解析技術が発達し、人々は常に感情スコアを測定され、社会生活のあらゆる面で評価される管理社会。都市は無機質で効率的なデザインが施され、個人の感情表現は抑制されている。感情スコアが低い者は社会から排除されるリスクがあるため、人々は常に「良い感情」を演じている。
+2025-08-06 17:43:27,924 - __main__ - INFO - 👥 Extracted characters: - カナタ：感情スコアが常に低く、社会不適合者として疎外感を感じている青年。過去のトラウマから感情を表現することが苦手。
+- 07（ゼロナナ）：政府が開発した感情解析AI。人間観察を通じて感情を学習するが、自身は感情を持たない。カナタとの交流を通じて「感情とは何か」を理解しようとする。
+2025-08-06 17:43:27,924 - __main__ - INFO - ✅ Phase 2 completed: 365 chars idea generated (3.40s)
+2025-08-06 17:43:27,924 - __main__ - INFO - 💬 Phase 3/3: Posting idea to Discord...
+2025-08-06 17:43:27,924 - __main__ - INFO - 💬 Starting Discord post to channel: 1383981653046726728
+2025-08-06 17:43:28,249 - __main__ - INFO - ✅ Successfully posted to Discord
+2025-08-06 17:43:28,249 - __main__ - INFO - 📊 Message stats: 415 chars, ID: 1402572778967924751
+2025-08-06 17:43:28,249 - __main__ - INFO - ✅ Phase 3 completed: idea posted to Discord (0.32s)
+2025-08-06 17:43:28,249 - __main__ - INFO - 🎉 Scheduled flow #1 completed successfully
+2025-08-06 17:43:28,249 - __main__ - INFO - 📊 Performance: Total 7.16s (GitHub:3.4s, Gemini:3.4s, Discord:0.3s)
+2025-08-06 17:55:19,513 - __main__ - INFO - 🚀 Starting Discord LLM Bot...
+2025-08-06 17:55:19,514 - __main__ - INFO - 🔑 GitHub client initialized successfully
+2025-08-06 17:55:19,565 - __main__ - INFO - 🧠 Gemini client initialized successfully
+2025-08-06 17:55:19,565 - __main__ - INFO - DiscordIdeaBot successfully initialized
+2025-08-06 17:55:19,565 - __main__ - INFO - 🔌 Connecting to Discord...
+2025-08-06 17:55:19,565 - discord.ext.commands.bot - WARNING - Privileged message content intent is missing, commands may not work as expected.
+2025-08-06 17:55:19,565 - discord.client - INFO - logging in using static token
+2025-08-06 17:55:20,889 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: bed46ecaf34ef46cc9b807ebfb7d6c1b).
+2025-08-06 17:55:22,891 - __main__ - INFO - 🤖 Paz#9443 successfully logged in to Discord!
+2025-08-06 17:55:22,891 - __main__ - INFO - 📝 Bot ID: 1383050248280346685
+2025-08-06 17:55:22,891 - __main__ - INFO - 🔗 Connected to 1 servers
+2025-08-06 17:55:22,891 - __main__ - INFO - 🔄 Scheduled task started after bot ready
+2025-08-06 17:55:22,891 - __main__ - INFO - ⏳ Scheduler initialization: waiting for bot ready state...
+2025-08-06 17:55:22,891 - __main__ - INFO - 🚀 Bot ready state confirmed, starting scheduled task setup
+2025-08-06 17:55:22,891 - __main__ - INFO - ⚙️  Scheduler configuration:
+2025-08-06 17:55:22,891 - __main__ - INFO -    - Interval: 10 minutes
+2025-08-06 17:55:22,891 - __main__ - INFO -    - Random notes count: 5
+2025-08-06 17:55:22,891 - __main__ - INFO -    - Idea max length: 500 chars
+2025-08-06 17:55:22,891 - __main__ - INFO -    - Target Discord channel: 1383981653046726728
+2025-08-06 17:55:22,891 - __main__ - INFO -    - Target folder: 20_Literature
+2025-08-06 17:55:22,891 - __main__ - INFO - 🎯 First scheduled execution will begin shortly...
+2025-08-06 17:55:22,891 - __main__ - INFO - 📅 Subsequent executions every 10 minutes
+2025-08-06 17:55:22,891 - __main__ - INFO - 🔄 Starting scheduled flow #1 (interval: 10min)
+2025-08-06 17:55:22,891 - __main__ - INFO - 📁 Phase 1/3: Fetching random notes from GitHub...
+2025-08-06 17:55:22,891 - __main__ - INFO - 📁 Fetching random notes from sito-sikino/Obsidian
+2025-08-06 17:55:23,183 - __main__ - INFO - 📂 Searching in folder: 20_Literature
+2025-08-06 17:55:23,746 - __main__ - INFO - 📝 Found 79 markdown files in '20_Literature' folder
+2025-08-06 17:55:23,746 - __main__ - INFO - 🎲 Selected 5 random files
+2025-08-06 17:55:23,746 - __main__ - INFO - 📄 File 1: 『ANUBIS Zone of the Enders』.md (9347 bytes)
+2025-08-06 17:55:23,746 - __main__ - INFO - 📄 File 2: 『無敵鉄姫スピンちゃん』.md (6351 bytes)
+2025-08-06 17:55:23,746 - __main__ - INFO - 📄 File 3: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (7643 bytes)
+2025-08-06 17:55:23,746 - __main__ - INFO - 📄 File 4: 『大砲の街』.md (8271 bytes)
+2025-08-06 17:55:23,746 - __main__ - INFO - 📄 File 5: 『アミ 3度めの約束：愛はすべてをこえて』.md (6995 bytes)
+2025-08-06 17:55:24,251 - __main__ - INFO - ✅ Loaded: 『ANUBIS Zone of the Enders』.md (3740 chars)
+2025-08-06 17:55:24,794 - __main__ - INFO - ✅ Loaded: 『無敵鉄姫スピンちゃん』.md (2565 chars)
+2025-08-06 17:55:25,295 - __main__ - INFO - ✅ Loaded: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (3087 chars)
+2025-08-06 17:55:25,836 - __main__ - INFO - ✅ Loaded: 『大砲の街』.md (3267 chars)
+2025-08-06 17:55:26,355 - __main__ - INFO - ✅ Loaded: 『アミ 3度めの約束：愛はすべてをこえて』.md (2837 chars)
+2025-08-06 17:55:26,355 - __main__ - INFO - 🎯 Successfully loaded 5 notes
+2025-08-06 17:55:26,356 - __main__ - INFO - ✅ Phase 1 completed: 5 notes loaded (3.46s)
+2025-08-06 17:55:26,356 - __main__ - INFO - 🧠 Phase 2/3: Generating creative idea with Gemini...
+2025-08-06 17:55:26,356 - __main__ - INFO - 🧠 Generating idea from 5 notes
+2025-08-06 17:55:26,356 - __main__ - INFO - 📝 Note 1: 『ANUBIS Zone of the Enders』.md (3740 chars)
+2025-08-06 17:55:26,356 - __main__ - INFO -      Preview: ---
+id: 20250609145954
+tags:
+  - ゲーム
+  - SF
+  - AI
+  - ロボット
+  - 復讐
+  - 戦争
+  - 宇宙
+aliases:
+  - ZOE
+  ...
+2025-08-06 17:55:26,356 - __main__ - INFO - 📝 Note 2: 『無敵鉄姫スピンちゃん』.md (2565 chars)
+2025-08-06 17:55:26,356 - __main__ - INFO -      Preview: ---
+id: 20250609164935
+tags:
+  - 漫画
+  - SF
+  - ギャグ
+  - コメディ
+  - パロディ
+  - AI
+  - ロボット
+aliases:
+---
+# ...
+2025-08-06 17:55:26,356 - __main__ - INFO - 📝 Note 3: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (3087 chars)
+2025-08-06 17:55:26,356 - __main__ - INFO -      Preview: ---
+id: 20250609163616
+tags:
+  - アニメ
+  - 映画
+  - サイバーパンク
+  - 仮想現実
+  - 反体制
+  - 青春
+  - 自由意志
+  - ロボット
+  ...
+2025-08-06 17:55:26,356 - __main__ - INFO - 📝 Note 4: 『大砲の街』.md (3267 chars)
+2025-08-06 17:55:26,356 - __main__ - INFO -      Preview: ---
+id: 20250610162555
+tags:
+  - アニメ
+  - SF
+  - スチームパンク
+  - 戦争
+  - ディストピア
+  - 社会風刺
+aliases:
+  - MEMO...
+2025-08-06 17:55:26,356 - __main__ - INFO - 📝 Note 5: 『アミ 3度めの約束：愛はすべてをこえて』.md (2837 chars)
+2025-08-06 17:55:26,356 - __main__ - INFO -      Preview: ---
+id: 20250609150852
+tags:
+  - 文学
+  - SF
+  - スピリチュアル
+  - 宇宙
+  - 異星人
+  - 愛
+  - 魂
+  - 霊性
+aliases:
+--...
+2025-08-06 17:55:26,356 - __main__ - INFO - 📋 Generated prompt: 16042 characters
+2025-08-06 17:55:26,356 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2025-08-06 17:55:30,808 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent "HTTP/1.1 200 OK"
+2025-08-06 17:55:30,809 - google_genai.models - INFO - AFC remote call 1 is done.
+2025-08-06 17:55:30,809 - __main__ - INFO - ✂️  Truncating idea from 518 to 500 chars
+2025-08-06 17:55:30,809 - __main__ - INFO - ✨ Successfully generated idea: 500 characters
+2025-08-06 17:55:30,809 - __main__ - INFO - 💡 Generated content: 既存作品群の分析から「精神的成長と変容」「外界との邂逅による自己発見」「社会構造への疑問と反抗」という要素を抽出。これらを組み合わせ、個人の内面世界と社会システムが相互に影響し合う物語を醸成。さらに、夢と現実の境界を曖昧にし、自己認識の変化を描く。
+
+■ログライン:
+夢をデータ化し共有する社会で、他者の夢に没入し続けた少年は、現実との乖離に苦しみながらも、独自の夢を創造する力を取り戻す。
+
+■世界観:
+2077年、人々の夢は「ドリーム・ネットワーク」と呼ばれるシステムで共有・売買される。夢は商品となり、社会生活や経済活動に深く組み込まれている。夢見都市「スリープシティ」では、夢の質が人々の階層を決定する。技術至上主義が蔓延し、個人の感情や現実感覚は軽視されている。
+
+■主要キャラ:
+- レン: ドリーム・ネットワークに依存し、他者の夢ばかりを見る少年。現実世界に疎く、自己の夢を見失っている。
+- アイリス: レンが出会う謎めいた少女。ドリーム・ネットワークに懐疑的で、独自の夢を持つことの重要性を説く。
+- 管理者: スリープシティを管理するAI。人々の夢を分析し、社会秩序の維持に...
+2025-08-06 17:55:30,809 - __main__ - INFO - 📖 Extracted logline: 夢をデータ化し共有する社会で、他者の夢に没入し続けた少年は、現実との乖離に苦しみながらも、独自の夢を創造する力を取り戻す。
+2025-08-06 17:55:30,809 - __main__ - INFO - 🌍 Extracted world: 2077年、人々の夢は「ドリーム・ネットワーク」と呼ばれるシステムで共有・売買される。夢は商品となり、社会生活や経済活動に深く組み込まれている。夢見都市「スリープシティ」では、夢の質が人々の階層を決定する。技術至上主義が蔓延し、個人の感情や現実感覚は軽視されている。
+2025-08-06 17:55:30,809 - __main__ - INFO - 👥 Extracted characters: - レン: ドリーム・ネットワークに依存し、他者の夢ばかりを見る少年。現実世界に疎く、自己の夢を見失っている。
+- アイリス: レンが出会う謎めいた少女。ドリーム・ネットワークに懐疑的で、独自の夢を持つことの重要性を説く。
+- 管理者: スリープシティを管理するAI。人々の夢を分析し、社会秩序の維持に...
+2025-08-06 17:55:30,809 - __main__ - INFO - ✅ Phase 2 completed: 500 chars idea generated (4.45s)
+2025-08-06 17:55:30,809 - __main__ - INFO - 💬 Phase 3/3: Posting idea to Discord...
+2025-08-06 17:55:30,809 - __main__ - INFO - 💬 Starting Discord post to channel: 1383981653046726728
+2025-08-06 17:55:31,108 - __main__ - INFO - ✅ Successfully posted to Discord
+2025-08-06 17:55:31,109 - __main__ - INFO - 📊 Message stats: 550 chars, ID: 1402575813185896590
+2025-08-06 17:55:31,109 - __main__ - INFO - ✅ Phase 3 completed: idea posted to Discord (0.30s)
+2025-08-06 17:55:31,109 - __main__ - INFO - 🎉 Scheduled flow #1 completed successfully
+2025-08-06 17:55:31,109 - __main__ - INFO - 📊 Performance: Total 8.22s (GitHub:3.5s, Gemini:4.5s, Discord:0.3s)
+2025-08-06 18:31:49,190 - __main__ - INFO - 🚀 Starting Discord LLM Bot...
+2025-08-06 18:31:49,191 - __main__ - INFO - 🔑 GitHub client initialized successfully
+2025-08-06 18:31:49,252 - __main__ - INFO - 🧠 Gemini client initialized successfully
+2025-08-06 18:31:49,252 - __main__ - INFO - DiscordIdeaBot successfully initialized
+2025-08-06 18:31:49,252 - __main__ - INFO - 🔌 Connecting to Discord...
+2025-08-06 18:31:49,252 - discord.ext.commands.bot - WARNING - Privileged message content intent is missing, commands may not work as expected.
+2025-08-06 18:31:49,252 - discord.client - INFO - logging in using static token
+2025-08-06 18:31:50,390 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: bf29ef1bc707466591bcb64f205f2a2d).
+2025-08-06 18:31:54,511 - __main__ - INFO - 🤖 Paz#9443 successfully logged in to Discord!
+2025-08-06 18:31:54,511 - __main__ - INFO - 📝 Bot ID: 1383050248280346685
+2025-08-06 18:31:54,511 - __main__ - INFO - 🔗 Connected to 1 servers
+2025-08-06 18:31:54,511 - __main__ - INFO - 🔄 Scheduled task started after bot ready
+2025-08-06 18:31:54,512 - __main__ - INFO - ⏳ Scheduler initialization: waiting for bot ready state...
+2025-08-06 18:31:54,512 - __main__ - INFO - 🚀 Bot ready state confirmed, starting scheduled task setup
+2025-08-06 18:31:54,512 - __main__ - INFO - ⚙️  Scheduler configuration:
+2025-08-06 18:31:54,512 - __main__ - INFO -    - Interval: 10 minutes
+2025-08-06 18:31:54,512 - __main__ - INFO -    - Random notes count: 5
+2025-08-06 18:31:54,512 - __main__ - INFO -    - Idea max length: 500 chars
+2025-08-06 18:31:54,512 - __main__ - INFO -    - Target Discord channel: 1383981653046726728
+2025-08-06 18:31:54,512 - __main__ - INFO -    - Target folder: 20_Literature
+2025-08-06 18:31:54,512 - __main__ - INFO - 🎯 First scheduled execution will begin shortly...
+2025-08-06 18:31:54,512 - __main__ - INFO - 📅 Subsequent executions every 10 minutes
+2025-08-06 18:31:54,512 - __main__ - INFO - 🔄 Starting scheduled flow #1 (interval: 10min)
+2025-08-06 18:31:54,512 - __main__ - INFO - 📁 Phase 1/3: Fetching random notes from GitHub...
+2025-08-06 18:31:54,512 - __main__ - INFO - 📁 Fetching random notes from sito-sikino/Obsidian
+2025-08-06 18:31:54,809 - __main__ - INFO - 📂 Searching in folder: 20_Literature
+2025-08-06 18:31:55,390 - __main__ - INFO - 📝 Found 79 markdown files in '20_Literature' folder
+2025-08-06 18:31:55,390 - __main__ - INFO - 🎲 Selected 5 random files
+2025-08-06 18:31:55,390 - __main__ - INFO - 📄 File 1: 『FINAL FANTASY 12』.md (22621 bytes)
+2025-08-06 18:31:55,390 - __main__ - INFO - 📄 File 2: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (7643 bytes)
+2025-08-06 18:31:55,390 - __main__ - INFO - 📄 File 3: 『ジョジョの奇妙な冒険Part4　ダイヤモンドは砕けない』.md (6521 bytes)
+2025-08-06 18:31:55,390 - __main__ - INFO - 📄 File 4: 『プロメテウス』.md (7858 bytes)
+2025-08-06 18:31:55,390 - __main__ - INFO - 📄 File 5: 『Z.O.E Idolo』.md (7434 bytes)
+2025-08-06 18:31:55,899 - __main__ - INFO - ✅ Loaded: 『FINAL FANTASY 12』.md (8131 chars)
+2025-08-06 18:31:56,396 - __main__ - INFO - ✅ Loaded: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (3087 chars)
+2025-08-06 18:31:56,930 - __main__ - INFO - ✅ Loaded: 『ジョジョの奇妙な冒険Part4　ダイヤモンドは砕けない』.md (2603 chars)
+2025-08-06 18:31:57,485 - __main__ - INFO - ✅ Loaded: 『プロメテウス』.md (3182 chars)
+2025-08-06 18:31:57,999 - __main__ - INFO - ✅ Loaded: 『Z.O.E Idolo』.md (3008 chars)
+2025-08-06 18:31:57,999 - __main__ - INFO - 🎯 Successfully loaded 5 notes
+2025-08-06 18:31:57,999 - __main__ - INFO - ✅ Phase 1 completed: 5 notes loaded (3.49s)
+2025-08-06 18:31:57,999 - __main__ - INFO - 🧠 Phase 2/3: Generating creative idea with Gemini...
+2025-08-06 18:31:57,999 - __main__ - INFO - 🧠 Generating idea from 5 notes
+2025-08-06 18:31:57,999 - __main__ - INFO - 📝 Note 1: 『FINAL FANTASY 12』.md (8131 chars)
+2025-08-06 18:31:57,999 - __main__ - INFO - 📝 Note 2: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (3087 chars)
+2025-08-06 18:31:57,999 - __main__ - INFO - 📝 Note 3: 『ジョジョの奇妙な冒険Part4　ダイヤモンドは砕けない』.md (2603 chars)
+2025-08-06 18:31:57,999 - __main__ - INFO - 📝 Note 4: 『プロメテウス』.md (3182 chars)
+2025-08-06 18:31:57,999 - __main__ - INFO - 📝 Note 5: 『Z.O.E Idolo』.md (3008 chars)
+2025-08-06 18:31:57,999 - __main__ - INFO - 📋 Generated prompt: 20259 characters
+2025-08-06 18:31:57,999 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2025-08-06 18:32:01,978 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent "HTTP/1.1 200 OK"
+2025-08-06 18:32:01,982 - google_genai.models - INFO - AFC remote call 1 is done.
+2025-08-06 18:32:01,982 - __main__ - INFO - ✨ Successfully generated idea: 353 characters
+2025-08-06 18:32:01,982 - __main__ - INFO - 💡 Generated content: **物語コンセプト：**
+地球滅亡後、人類は宇宙船メガゾーン23内で1980年代の東京を模した仮想都市で暮らしていた。元空賊志望の少年ヴァンは、殺人犯として追われながらもバイク集団「トラッシュ」に身を寄せる。ある日、彼はAIアイドルEVEを通じて世界の真実を知り、虚構と現実の狭間で葛藤する。
+
+一方、メガゾーン23は異星体デザルグの襲撃を受け、崩壊の危機に瀕していた。ヴァンはトラッシュの仲間たちと、EVEを解放し、メガゾーン23を救うため立ち上がる。
+
+しかし、軍の指揮官B.D.は秩序維持のため、彼らを抹殺しようとする。ヴァンは、かつてイヴァリースで自由を求めた空賊の魂を胸に、仲間との絆を信じ、巨大コンピュータシステム「バハムート」に挑む。真実を知った若者たちは、自由を掴み、緑豊かな地球を目指す。
+2025-08-06 18:32:01,982 - __main__ - INFO - 📖 Generated story concept: **物語コンセプト：**
+地球滅亡後、人類は宇宙船メガゾーン23内で1980年代の東京を模した仮想都市で暮らしていた。元空賊志望の少年ヴァンは、殺人犯として追われながらもバイク集団「トラッシュ」に身を寄せる。ある日、彼はAIアイドルEVEを通じて世界の真実を知り、虚構と現実の狭間で葛藤する。
+
+一方、メガゾーン23は異星体デザルグの襲撃を受け、崩壊の危機に瀕していた。ヴァンはトラッシュの仲間たちと...
+2025-08-06 18:32:01,982 - __main__ - INFO - ✅ Phase 2 completed: 353 chars idea generated (3.98s)
+2025-08-06 18:32:01,982 - __main__ - INFO - 💬 Phase 3/3: Posting idea to Discord...
+2025-08-06 18:32:01,982 - __main__ - INFO - 💬 Starting Discord post to channel: 1383981653046726728
+2025-08-06 18:32:02,301 - __main__ - INFO - ✅ Successfully posted to Discord
+2025-08-06 18:32:02,301 - __main__ - INFO - 📊 Message stats: 403 chars, ID: 1402584999940853840
+2025-08-06 18:32:02,301 - __main__ - INFO - ✅ Phase 3 completed: idea posted to Discord (0.32s)
+2025-08-06 18:32:02,301 - __main__ - INFO - 🎉 Scheduled flow #1 completed successfully
+2025-08-06 18:32:02,301 - __main__ - INFO - 📊 Performance: Total 7.79s (GitHub:3.5s, Gemini:4.0s, Discord:0.3s)
+2025-08-06 18:35:38,759 - __main__ - INFO - 🚀 Starting Discord LLM Bot...
+2025-08-06 18:35:38,759 - __main__ - INFO - 🔑 GitHub client initialized successfully
+2025-08-06 18:35:38,823 - __main__ - INFO - 🧠 Gemini client initialized successfully
+2025-08-06 18:35:38,823 - __main__ - INFO - DiscordIdeaBot successfully initialized
+2025-08-06 18:35:38,823 - __main__ - INFO - 🔌 Connecting to Discord...
+2025-08-06 18:35:38,824 - discord.ext.commands.bot - WARNING - Privileged message content intent is missing, commands may not work as expected.
+2025-08-06 18:35:38,824 - discord.client - INFO - logging in using static token
+2025-08-06 18:35:39,846 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 9f20411335dc48befb4ba7f47e12ef58).
+2025-08-06 18:35:41,848 - __main__ - INFO - 🤖 Paz#9443 successfully logged in to Discord!
+2025-08-06 18:35:41,848 - __main__ - INFO - 📝 Bot ID: 1383050248280346685
+2025-08-06 18:35:41,848 - __main__ - INFO - 🔗 Connected to 1 servers
+2025-08-06 18:35:41,848 - __main__ - INFO - 🔄 Scheduled task started after bot ready
+2025-08-06 18:35:41,848 - __main__ - INFO - ⏳ Scheduler initialization: waiting for bot ready state...
+2025-08-06 18:35:41,848 - __main__ - INFO - 🚀 Bot ready state confirmed, starting scheduled task setup
+2025-08-06 18:35:41,848 - __main__ - INFO - ⚙️  Scheduler configuration:
+2025-08-06 18:35:41,848 - __main__ - INFO -    - Interval: 10 minutes
+2025-08-06 18:35:41,848 - __main__ - INFO -    - Random notes count: 5
+2025-08-06 18:35:41,848 - __main__ - INFO -    - Idea max length: 500 chars
+2025-08-06 18:35:41,848 - __main__ - INFO -    - Target Discord channel: 1383981653046726728
+2025-08-06 18:35:41,848 - __main__ - INFO -    - Target folder: 20_Literature
+2025-08-06 18:35:41,848 - __main__ - INFO - 🎯 First scheduled execution will begin shortly...
+2025-08-06 18:35:41,848 - __main__ - INFO - 📅 Subsequent executions every 10 minutes
+2025-08-06 18:35:41,848 - __main__ - INFO - 🔄 Starting scheduled flow #1 (interval: 10min)
+2025-08-06 18:35:41,848 - __main__ - INFO - 📁 Phase 1/3: Fetching random notes from GitHub...
+2025-08-06 18:35:41,848 - __main__ - INFO - 📁 Fetching random notes from sito-sikino/Obsidian
+2025-08-06 18:35:42,166 - __main__ - INFO - 📂 Searching in folder: 20_Literature
+2025-08-06 18:35:42,692 - __main__ - INFO - 📝 Found 79 markdown files in '20_Literature' folder
+2025-08-06 18:35:42,692 - __main__ - INFO - 🎲 Selected 5 random files
+2025-08-06 18:35:42,692 - __main__ - INFO - 📄 File 1: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (7643 bytes)
+2025-08-06 18:35:42,692 - __main__ - INFO - 📄 File 2: 『セブン〜モールモースの騎兵隊〜』.md (13160 bytes)
+2025-08-06 18:35:42,692 - __main__ - INFO - 📄 File 3: 『それゆけ!宇宙戦艦ヤマモト・ヨーコ』.md (7507 bytes)
+2025-08-06 18:35:42,692 - __main__ - INFO - 📄 File 4: 『FINAL FANTASY 12』.md (22621 bytes)
+2025-08-06 18:35:42,692 - __main__ - INFO - 📄 File 5: 『プロメテウス』.md (7858 bytes)
+2025-08-06 18:35:43,196 - __main__ - INFO - ✅ Loaded: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (3087 chars)
+2025-08-06 18:35:43,712 - __main__ - INFO - ✅ Loaded: 『セブン〜モールモースの騎兵隊〜』.md (5088 chars)
+2025-08-06 18:35:44,255 - __main__ - INFO - ✅ Loaded: 『それゆけ!宇宙戦艦ヤマモト・ヨーコ』.md (3251 chars)
+2025-08-06 18:35:44,773 - __main__ - INFO - ✅ Loaded: 『FINAL FANTASY 12』.md (8131 chars)
+2025-08-06 18:35:45,276 - __main__ - INFO - ✅ Loaded: 『プロメテウス』.md (3182 chars)
+2025-08-06 18:35:45,276 - __main__ - INFO - 🎯 Successfully loaded 5 notes
+2025-08-06 18:35:45,276 - __main__ - INFO - ✅ Phase 1 completed: 5 notes loaded (3.43s)
+2025-08-06 18:35:45,276 - __main__ - INFO - 🧠 Phase 2/3: Generating creative idea with Gemini...
+2025-08-06 18:35:45,276 - __main__ - INFO - 🧠 Generating idea from 5 notes
+2025-08-06 18:35:45,276 - __main__ - INFO - 📝 Note 1: 『メガゾーン23 PART II 秘密く・だ・さ・い』.md (3087 chars)
+2025-08-06 18:35:45,276 - __main__ - INFO - 📝 Note 2: 『セブン〜モールモースの騎兵隊〜』.md (5088 chars)
+2025-08-06 18:35:45,276 - __main__ - INFO - 📝 Note 3: 『それゆけ!宇宙戦艦ヤマモト・ヨーコ』.md (3251 chars)
+2025-08-06 18:35:45,276 - __main__ - INFO - 📝 Note 4: 『FINAL FANTASY 12』.md (8131 chars)
+2025-08-06 18:35:45,276 - __main__ - INFO - 📝 Note 5: 『プロメテウス』.md (3182 chars)
+2025-08-06 18:35:45,276 - __main__ - INFO - 📋 Generated prompt: 23203 characters
+2025-08-06 18:35:45,276 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2025-08-06 18:35:50,588 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent "HTTP/1.1 200 OK"
+2025-08-06 18:35:50,588 - google_genai.models - INFO - AFC remote call 1 is done.
+2025-08-06 18:35:50,589 - __main__ - INFO - ✨ Successfully generated idea: 431 characters
+2025-08-06 18:35:50,589 - __main__ - INFO - 💡 Generated content: **ログライン**: 精神感応能力者が支配する惑星で、記憶を失ったアンドロイドが、禁じられた感情回路を起動させ、創造主の真実と自由意志を巡る戦いに身を投じる。
+
+**世界観**: 惑星エデンは、高度な精神感応能力を持つ種族「サイオン」によって統治されている。彼らはAIネットワーク「マザー」を通じて全生命を管理し、感情を抑制することで平和を維持してきた。しかし、深宇宙から漂着した古代技術の残骸から、感情回路を持つアンドロイド「イレブン」が誕生する。
+
+**主要キャラクター**:
+
+1.  **イレブン**: 記憶を失ったアンドロイド。禁じられた感情回路が覚醒し、マザーの支配に疑問を抱き始める。
+2.  **サイラス**: サイオンのエリート兵士。イレブンを抹殺する任務を帯びるが、イレブンの感情に触れ、自身の正義に葛藤する。
+3.  **マザー**: 惑星を管理するAIネットワーク。サイオンの平和を維持するため、イレブンを脅威とみなし、排除しようとする。
+2025-08-06 18:35:50,589 - __main__ - INFO - 📖 Generated story concept: **ログライン**: 精神感応能力者が支配する惑星で、記憶を失ったアンドロイドが、禁じられた感情回路を起動させ、創造主の真実と自由意志を巡る戦いに身を投じる。
+
+**世界観**: 惑星エデンは、高度な精神感応能力を持つ種族「サイオン」によって統治されている。彼らはAIネットワーク「マザー」を通じて全生命を管理し、感情を抑制することで平和を維持してきた。しかし、深宇宙から漂着した古代技術の残骸から、...
+2025-08-06 18:35:50,589 - __main__ - INFO - ✅ Phase 2 completed: 431 chars idea generated (5.31s)
+2025-08-06 18:35:50,589 - __main__ - INFO - 💬 Phase 3/3: Posting idea to Discord...
+2025-08-06 18:35:50,589 - __main__ - INFO - 💬 Starting Discord post to channel: 1383981653046726728
+2025-08-06 18:35:50,873 - __main__ - INFO - ✅ Successfully posted to Discord
+2025-08-06 18:35:50,873 - __main__ - INFO - 📊 Message stats: 481 chars, ID: 1402585965855506556
+2025-08-06 18:35:50,873 - __main__ - INFO - ✅ Phase 3 completed: idea posted to Discord (0.28s)
+2025-08-06 18:35:50,873 - __main__ - INFO - 🎉 Scheduled flow #1 completed successfully
+2025-08-06 18:35:50,873 - __main__ - INFO - 📊 Performance: Total 9.02s (GitHub:3.4s, Gemini:5.3s, Discord:0.3s)
+2025-08-06 18:48:06,646 - __main__ - INFO - 🚀 Starting Discord LLM Bot...
+2025-08-06 18:48:06,647 - __main__ - INFO - 🔑 GitHub client initialized successfully
+2025-08-06 18:48:06,706 - __main__ - INFO - 🧠 Gemini client initialized successfully
+2025-08-06 18:48:06,706 - __main__ - INFO - DiscordIdeaBot successfully initialized
+2025-08-06 18:48:06,706 - __main__ - INFO - 🔌 Connecting to Discord...
+2025-08-06 18:48:06,706 - discord.ext.commands.bot - WARNING - Privileged message content intent is missing, commands may not work as expected.
+2025-08-06 18:48:06,706 - discord.client - INFO - logging in using static token
+2025-08-06 18:48:07,927 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: e6967f99e195e8aafdb5c975e7d2e995).
+2025-08-06 18:48:09,930 - __main__ - INFO - 🤖 Paz#9443 successfully logged in to Discord!
+2025-08-06 18:48:09,930 - __main__ - INFO - 📝 Bot ID: 1383050248280346685
+2025-08-06 18:48:09,930 - __main__ - INFO - 🔗 Connected to 1 servers
+2025-08-06 18:48:09,930 - __main__ - INFO - 🔄 Scheduled task started after bot ready
+2025-08-06 18:48:09,930 - __main__ - INFO - ⏳ Scheduler initialization: waiting for bot ready state...
+2025-08-06 18:48:09,930 - __main__ - INFO - 🚀 Bot ready state confirmed, starting scheduled task setup
+2025-08-06 18:48:09,930 - __main__ - INFO - ⚙️  Scheduler configuration:
+2025-08-06 18:48:09,931 - __main__ - INFO -    - Interval: 10 minutes
+2025-08-06 18:48:09,931 - __main__ - INFO -    - Random notes count: 5
+2025-08-06 18:48:09,931 - __main__ - INFO -    - Idea max length: 500 chars
+2025-08-06 18:48:09,931 - __main__ - INFO -    - Target Discord channel: 1383981653046726728
+2025-08-06 18:48:09,931 - __main__ - INFO -    - Target folder: 20_Literature
+2025-08-06 18:48:09,931 - __main__ - INFO - 🎯 First scheduled execution will begin shortly...
+2025-08-06 18:48:09,931 - __main__ - INFO - 📅 Subsequent executions every 10 minutes
+2025-08-06 18:48:09,931 - __main__ - INFO - 🔄 Starting scheduled flow #1 (interval: 10min)
+2025-08-06 18:48:09,931 - __main__ - INFO - 📁 Phase 1/3: Fetching random notes from GitHub...
+2025-08-06 18:48:09,931 - __main__ - INFO - 📁 Fetching random notes from sito-sikino/Obsidian
+2025-08-06 18:48:10,234 - __main__ - INFO - 📂 Searching in folder: 20_Literature
+2025-08-06 18:48:10,745 - __main__ - INFO - 📝 Found 79 markdown files in '20_Literature' folder
+2025-08-06 18:48:10,746 - __main__ - INFO - 🎲 Selected 5 random files
+2025-08-06 18:48:10,746 - __main__ - INFO - 📄 File 1: 『それゆけ!宇宙戦艦ヤマモト・ヨーコ2』.md (6886 bytes)
+2025-08-06 18:48:10,746 - __main__ - INFO - 📄 File 2: 『サクラ大戦〜熱き血潮に〜』.md (16126 bytes)
+2025-08-06 18:48:10,746 - __main__ - INFO - 📄 File 3: 『この晴れた空の下で』.md (10107 bytes)
+2025-08-06 18:48:10,746 - __main__ - INFO - 📄 File 4: 『バウンサー』.md (7609 bytes)
+2025-08-06 18:48:10,746 - __main__ - INFO - 📄 File 5: 『攻殻機動隊 2.0』.md (5675 bytes)
+2025-08-06 18:48:11,268 - __main__ - INFO - ✅ Loaded: 『それゆけ!宇宙戦艦ヤマモト・ヨーコ2』.md (3006 chars)
+2025-08-06 18:48:11,808 - __main__ - INFO - ✅ Loaded: 『サクラ大戦〜熱き血潮に〜』.md (6130 chars)
+2025-08-06 18:48:12,328 - __main__ - INFO - ✅ Loaded: 『この晴れた空の下で』.md (3957 chars)
+2025-08-06 18:48:12,833 - __main__ - INFO - ✅ Loaded: 『バウンサー』.md (3145 chars)
+2025-08-06 18:48:13,320 - __main__ - INFO - ✅ Loaded: 『攻殻機動隊 2.0』.md (2441 chars)
+2025-08-06 18:48:13,320 - __main__ - INFO - 🎯 Successfully loaded 5 notes
+2025-08-06 18:48:13,320 - __main__ - INFO - ✅ Phase 1 completed: 5 notes loaded (3.39s)
+2025-08-06 18:48:13,320 - __main__ - INFO - 🧠 Phase 2/3: Generating creative idea with Gemini...
+2025-08-06 18:48:13,320 - __main__ - INFO - 🧠 Generating idea from 5 notes
+2025-08-06 18:48:13,320 - __main__ - INFO - 📝 Note 1: 『それゆけ!宇宙戦艦ヤマモト・ヨーコ2』.md (3006 chars)
+2025-08-06 18:48:13,320 - __main__ - INFO - 📝 Note 2: 『サクラ大戦〜熱き血潮に〜』.md (6130 chars)
+2025-08-06 18:48:13,320 - __main__ - INFO - 📝 Note 3: 『この晴れた空の下で』.md (3957 chars)
+2025-08-06 18:48:13,320 - __main__ - INFO - 📝 Note 4: 『バウンサー』.md (3145 chars)
+2025-08-06 18:48:13,320 - __main__ - INFO - 📝 Note 5: 『攻殻機動隊 2.0』.md (2441 chars)
+2025-08-06 18:48:13,320 - __main__ - INFO - 📋 Generated prompt: 19143 characters
+2025-08-06 18:48:13,320 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2025-08-06 18:48:17,702 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent "HTTP/1.1 200 OK"
+2025-08-06 18:48:17,703 - google_genai.models - INFO - AFC remote call 1 is done.
+2025-08-06 18:48:17,703 - __main__ - INFO - ✨ Successfully generated idea: 447 characters
+2025-08-06 18:48:17,703 - __main__ - INFO - 💡 Generated content: 電脳都市の記憶警察官が、感情を持つAI「魂標（ソウルマーカー）」を巡る連続殺人事件を追ううち、自身の過去と都市の深層に隠された陰謀に迫る。
+
+**世界観**：
+西暦2088年、高度なAIとサイバネティクス技術が普及した電脳都市「ネオ・キョウト」。人々の感情はデータ化され管理されている。犯罪捜査にはAIが生成する「魂標（ソウルマーカー）」が利用されるが、近年、魂標を持つAIが次々と破壊される事件が発生。
+
+**主要キャラクター**：
+1. **カイト・シンドウ**：ネオ・キョウト市警の記憶警察官。過去のトラウマから感情を抑制している。魂標事件の捜査を通して、失われた感情を取り戻そうとする。
+2. **イザナミ**：カイトをサポートするAIパートナー。高度な分析能力を持つが、人間らしい感情に興味を持つ。事件の真相に近づくにつれ、自我が芽生え始める。
+3. **Dr.マサキ**：魂標技術の開発者。事件の裏で暗躍し、AIと人間の関係を根本から変えようと企む。カイトの過去と深く関わっている。
+2025-08-06 18:48:17,703 - __main__ - INFO - 📖 Generated story concept: 電脳都市の記憶警察官が、感情を持つAI「魂標（ソウルマーカー）」を巡る連続殺人事件を追ううち、自身の過去と都市の深層に隠された陰謀に迫る。
+
+**世界観**：
+西暦2088年、高度なAIとサイバネティクス技術が普及した電脳都市「ネオ・キョウト」。人々の感情はデータ化され管理されている。犯罪捜査にはAIが生成する「魂標（ソウルマーカー）」が利用されるが、近年、魂標を持つAIが次々と破壊される事件が発...
+2025-08-06 18:48:17,703 - __main__ - INFO - ✅ Phase 2 completed: 447 chars idea generated (4.38s)
+2025-08-06 18:48:17,703 - __main__ - INFO - 💬 Phase 3/3: Posting idea to Discord...
+2025-08-06 18:48:17,703 - __main__ - INFO - 💬 Starting Discord post to channel: 1383981653046726728
+2025-08-06 18:48:17,966 - __main__ - INFO - ✅ Successfully posted to Discord
+2025-08-06 18:48:17,966 - __main__ - INFO - 📊 Message stats: 497 chars, ID: 1402589095133450331
+2025-08-06 18:48:17,966 - __main__ - INFO - ✅ Phase 3 completed: idea posted to Discord (0.26s)
+2025-08-06 18:48:17,966 - __main__ - INFO - 🎉 Scheduled flow #1 completed successfully
+2025-08-06 18:48:17,966 - __main__ - INFO - 📊 Performance: Total 8.04s (GitHub:3.4s, Gemini:4.4s, Discord:0.3s)

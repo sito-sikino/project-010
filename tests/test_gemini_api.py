@@ -52,23 +52,35 @@ class TestGeminiAPI:
                 "# 時間旅行\n主人公は古い時計を見つけて、過去に戻ることができるようになった。",
                 "# ドラゴンの卵\n村で発見された巨大な卵から、小さなドラゴンが孵化した。"
             ]
+            test_titles = [
+                "magical_forest.md",
+                "time_travel.md", 
+                "dragon_egg.md"
+            ]
             
-            # Gemini APIレスポンスをモック化
+            # Gemini APIレスポンス（新しい形式）をモック化
             mock_response = MagicMock()
-            mock_response.text = "時間を操る魔法使いが、古代ドラゴンと共に森の秘密を解き明かす壮大な冒険物語。主人公は時計の力で過去と現在を行き来し、失われた魔法の真実に迫る。"
+            mock_response.text = """■ログライン: 記憶を物質化できる青年が、消失した都市の真実を追う
+■世界観: 2150年、記憶が実体化する技術により再構築された浮遊都市群
+■主要キャラ: 記憶探偵リョウ(24)、消失事件の鍵を握る少女アヤ(16)、記憶商人の老人"""
             
             with patch.object(bot.gemini_client.models, 'generate_content', return_value=mock_response):
                 # アイデア生成実行
-                idea = await bot.generate_idea(test_notes)
+                idea = await bot.generate_idea(test_notes, test_titles)
                 
-                # 結果検証
+                # 結果検証（新しい構造化出力形式）
                 assert isinstance(idea, str)
                 assert len(idea) > 0
-                assert "魔法" in idea or "ドラゴン" in idea or "時間" in idea
+                # 新しい出力形式の基本要素を確認
+                assert "■ログライン:" in idea
+                assert "■世界観:" in idea
+                assert "■主要キャラ:" in idea
+                # 具体的なオリジナル要素を確認
+                assert "記憶" in idea and "都市" in idea
 
     def test_prompt_formatting(self):
-        """プロンプト整形テスト"""
-        # プロンプトテンプレート整形機能のテスト
+        """オリジナル創作要素プロンプト整形テスト"""
+        # 新しい抽象化→醸成プロセスプロンプトのテスト
         with patch.dict(os.environ, {
             'GITHUB_TOKEN': 'test_github_token',
             'GEMINI_API_KEY': 'test_gemini_key', 
@@ -80,11 +92,11 @@ class TestGeminiAPI:
             
             bot = DiscordIdeaBot()
             
-            # テスト用ノート断片
+            # テスト用既存作品分析ノート
             test_notes = [
-                "魔法の世界",
-                "勇敢な騎士",
-                "古代の秘密"
+                "# エヴァンゲリオン分析\n人類補完計画、使徒との戦い、内面的な成長テーマ",
+                "# 攻殻機動隊分析\nサイバーパンク世界観、義体と電脳、アイデンティティの探求", 
+                "# AKIRA分析\n超能力による破壊と再生、権力構造への反抗、未来都市設定"
             ]
             
             # プロンプト整形メソッドが存在することを確認
@@ -96,14 +108,25 @@ class TestGeminiAPI:
             # プロンプトの基本構造確認
             assert isinstance(formatted_prompt, str)
             assert len(formatted_prompt) > 0
-            # ノート内容が含まれることを確認
-            assert "魔法の世界" in formatted_prompt
-            assert "勇敢な騎士" in formatted_prompt  
-            assert "古代の秘密" in formatted_prompt
-            # アイデア生成指示が含まれることを確認
-            assert ("アイデア" in formatted_prompt or 
-                    "物語" in formatted_prompt or 
-                    "コンセプト" in formatted_prompt)
+            
+            # 既存作品分析データが含まれることを確認
+            assert "エヴァンゲリオン分析" in formatted_prompt
+            assert "攻殻機動隊分析" in formatted_prompt
+            assert "AKIRA分析" in formatted_prompt
+            
+            # 抽象化→醸成プロセス指示が含まれることを確認
+            assert "抽象化" in formatted_prompt
+            assert "醸成" in formatted_prompt
+            assert "オリジナル" in formatted_prompt
+            
+            # 新しい出力フォーマット指示が含まれることを確認
+            assert "■ログライン:" in formatted_prompt
+            assert "■世界観:" in formatted_prompt  
+            assert "■主要キャラ:" in formatted_prompt
+            
+            # 重要指示が含まれることを確認
+            assert "既存要素の直接利用・改変・オマージュは厳禁" in formatted_prompt
+            assert "500文字以内" in formatted_prompt
 
     @pytest.mark.asyncio
     async def test_api_error_handling(self):
@@ -121,12 +144,13 @@ class TestGeminiAPI:
             bot = DiscordIdeaBot()
             
             test_notes = ["テストノート"]
+            test_titles = ["test_note.md"]
             
             # API エラーをシミュレート
             with patch.object(bot.gemini_client.models, 'generate_content', side_effect=Exception("API Rate limit exceeded")):
                 # Gemini API例外が発生することを確認
                 with pytest.raises(GeminiAPIError) as exc_info:
-                    await bot.generate_idea(test_notes)
+                    await bot.generate_idea(test_notes, test_titles)
                 
                 # エラーメッセージにAPI関連情報が含まれることを確認
                 assert "rate limit" in str(exc_info.value).lower() or \

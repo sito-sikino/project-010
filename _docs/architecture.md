@@ -14,6 +14,8 @@ project-010/
 ├── settings.py          # 設定管理（一元化）
 ├── .env                 # 環境変数（API キー等）
 ├── requirements.txt     # 依存関係
+├── logs/
+│   └── discord_bot.log  # 構造化ログ出力
 └── tests/
     └── test_main.py     # ユニットテスト
 ```
@@ -32,17 +34,22 @@ project-010/
 │  │                │                    │ │
 │  │  ┌─────────────▼─────────────────┐  │ │
 │  │  │    get_random_notes()         │  │ │ 
-│  │  │    (GitHub API)               │  │ │
+│  │  │    (20_Literature/GitHub API) │  │ │
 │  │  └─────────────┬─────────────────┘  │ │
 │  │                ▼                    │ │
 │  │  ┌─────────────┴─────────────────┐  │ │
 │  │  │    generate_idea(notes)       │  │ │
-│  │  │    (Gemini API)               │  │ │
+│  │  │    (Gemini 2.0 Flash API)     │  │ │
 │  │  └─────────────┬─────────────────┘  │ │
 │  │                ▼                    │ │
 │  │  ┌─────────────┴─────────────────┐  │ │
 │  │  │    post_to_discord(idea)      │  │ │
 │  │  │    (Discord API)              │  │ │
+│  │  └─────────────┬─────────────────┘  │ │
+│  │                ▼                    │ │
+│  │  ┌─────────────┴─────────────────┐  │ │
+│  │  │         Log Output            │  │ │
+│  │  │    (logs/discord_bot.log)     │  │ │
 │  │  └───────────────────────────────┘  │ │
 │  └─────────────────────────────────────┘ │
 └─────────────────────────────────────────┘
@@ -116,9 +123,10 @@ DAILY_REQUESTS_GITHUB = 144   # 5000req/hour以内（余裕あり）
 **settings.py: 意味的な設定値**
 ```python
 # アイデア生成設定
-IDEA_GENERATION_INTERVAL = 10  # 分
+POSTING_INTERVAL_MINUTES = 10  # 投稿間隔（分）
 RANDOM_NOTES_COUNT = 5         # 取得ノート数
 IDEA_MAX_LENGTH = 500          # 最大文字数
+TARGET_FOLDER = '20_Literature'  # 対象フォルダ
 ```
 
 **.env: 機密情報・環境依存値**
@@ -131,6 +139,7 @@ DISCORD_BOT_TOKEN=xxxxx
 # リポジトリ設定
 OBSIDIAN_REPO_OWNER=username
 OBSIDIAN_REPO_NAME=vault
+TARGET_FOLDER=20_Literature
 ```
 
 ### エラーハンドリング（Fail-Fast原則）

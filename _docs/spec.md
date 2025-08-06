@@ -7,9 +7,10 @@ GitHub上のObsidian Vaultからランダムにノートを取得し、Gemini 2.
 ## 2. 機能要件
 
 ### 2.1 アイデア生成・投稿（10分間隔）
-- **ランダムノート取得**: GitHub API経由でObsidian Vaultからランダムに複数ノートを取得
+- **ランダムノート取得**: GitHub API経由でObsidian Vault特定フォルダ（20_Literature）からランダムに複数ノートを取得
 - **アイデア生成**: 取得したノート断片をGemini 2.0 Flashに渡して創作アイデア（物語の基礎コンセプト案）生成
 - **自動投稿**: 生成されたアイデアをDiscordに投稿
+- **ログ記録**: 全処理過程をファイル出力で永続記録
 
 ## 3. 技術要件
 
@@ -25,7 +26,9 @@ GitHub API: 5,000 req/hour上限
 ### 3.2 処理フロー
 ```
 アイデア生成（10分間隔）
-GitHub API → ランダムノート取得 → Gemini生成 → Discord投稿
+GitHub API → 20_Literatureフォルダからランダムノート取得 → Gemini生成 → Discord投稿
+     ↓              ↓                    ↓           ↓
+  ログ記録      ファイル名記録        コンセプト記録   投稿結果記録
 ```
 
 ### 3.3 アーキテクチャパターン
@@ -34,9 +37,10 @@ GitHub API → ランダムノート取得 → Gemini生成 → Discord投稿
 ```
 Main Scheduler (10min間隔)
 └── Content Generation Function
-    ├── GitHub API: ランダムノート取得
-    ├── Gemini 2.0 Flash: アイデア生成
-    └── Discord API: 投稿
+    ├── GitHub API: 20_Literatureフォルダからランダムノート取得
+    ├── Gemini 2.0 Flash: 物語基礎コンセプト案生成
+    ├── Discord API: 投稿
+    └── Log System: ファイル出力記録
 ```
 
 ## 4. 非機能要件
@@ -54,7 +58,7 @@ Main Scheduler (10min間隔)
 ### 4.3 セキュリティ要件
 - **認証情報**: `.env`による環境変数管理
 - **API Key**: GitHub、Gemini、Discord APIキー管理
-- **ログ管理**: 機密情報の非記録
+- **ログ管理**: 機密情報の非記録、構造化ログのファイル出力（logs/discord_bot.log）
 
 ## 5. 開発制約
 

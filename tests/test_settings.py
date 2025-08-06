@@ -55,7 +55,7 @@ class TestSettings:
             assert settings.DISCORD_BOT_TOKEN is not None
             assert settings.OBSIDIAN_REPO_OWNER is not None
             assert settings.OBSIDIAN_REPO_NAME is not None
-            assert settings.POSTING_INTERVAL is not None
+            assert settings.POSTING_INTERVAL_MINUTES is not None
             assert settings.RANDOM_NOTES_COUNT is not None
 
     def test_fail_fast_on_missing_env(self):
