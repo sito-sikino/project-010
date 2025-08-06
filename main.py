@@ -7,7 +7,7 @@ Fail-Fast原則に基づく例外管理とカスタムエラー処理
 
 import discord
 from discord.ext import commands
-from settings import DISCORD_BOT_TOKEN, GITHUB_TOKEN, OBSIDIAN_REPO_OWNER, OBSIDIAN_REPO_NAME, RANDOM_NOTES_COUNT, GEMINI_API_KEY, IDEA_MAX_LENGTH
+from settings import DISCORD_BOT_TOKEN, GITHUB_TOKEN, OBSIDIAN_REPO_OWNER, OBSIDIAN_REPO_NAME, RANDOM_NOTES_COUNT, GEMINI_API_KEY, IDEA_MAX_LENGTH, DISCORD_CHANNEL_ID
 import logging
 from typing import Optional, List
 from github import Github
@@ -278,6 +278,110 @@ class DiscordIdeaBot(commands.Bot):
                 error_msg = f"Gemini API authentication failed: {e}"
             
             raise GeminiAPIError(error_msg) from e
+
+    def _format_discord_message(self, idea: str) -> str:
+        """
+        Discord投稿用メッセージフォーマット
+        
+        Discord 2000文字制限に対応し、装飾付きテンプレートで投稿メッセージを整形
+        
+        Args:
+            idea: 生成されたアイデア (Gemini API出力)
+            
+        Returns:
+            str: フォーマット済みDiscordメッセージ (2000文字以内保証)
+        """
+        # メッセージテンプレート定数
+        TEMPLATE_HEADER = "✨ **新しい創作アイデア**\n\n"
+        TEMPLATE_FOOTER = "\n\n---\n🤖 *Discord LLM Bot による自動生成*"
+        DISCORD_MAX_LENGTH = 2000
+        TRUNCATION_SUFFIX = "..."
+        
+        # 基本メッセージ構築
+        formatted_message = f"{TEMPLATE_HEADER}{idea}{TEMPLATE_FOOTER}"
+        
+        # Discord文字数制限チェック・対応
+        if len(formatted_message) <= DISCORD_MAX_LENGTH:
+            return formatted_message
+            
+        # 長文の場合: アイデア部分を動的調整
+        template_overhead = len(TEMPLATE_HEADER) + len(TEMPLATE_FOOTER) + len(TRUNCATION_SUFFIX)
+        max_idea_length = DISCORD_MAX_LENGTH - template_overhead
+        
+        if max_idea_length > 0:
+            truncated_idea = idea[:max_idea_length] + TRUNCATION_SUFFIX
+            return f"{TEMPLATE_HEADER}{truncated_idea}{TEMPLATE_FOOTER}"
+        else:
+            # 極端ケース: 最小限メッセージ
+            logger.warning("⚠️  Idea too long, using minimal message format")
+            return f"✨ アイデア生成完了\n\n{idea[:1950]}{TRUNCATION_SUFFIX}"
+
+    async def post_to_discord(self, idea: str) -> None:
+        """
+        Discord指定チャンネルにアイデア投稿
+        
+        Fail-Fast原則に従い、Discord API関連エラーは即座に停止
+        
+        Args:
+            idea: 投稿するアイデア (空文字・None不可)
+            
+        Raises:
+            DiscordAPIError: Discord API関連エラー (チャンネル取得失敗、投稿失敗等)
+        """
+        try:
+            # 入力検証
+            if not idea or not idea.strip():
+                raise DiscordAPIError("Empty or whitespace-only idea cannot be posted")
+            
+            if not DISCORD_CHANNEL_ID:
+                raise DiscordAPIError("DISCORD_CHANNEL_ID environment variable not configured")
+            
+            logger.info(f"💬 Starting Discord post to channel: {DISCORD_CHANNEL_ID}")
+            logger.debug(f"Idea preview: {idea[:50]}{'...' if len(idea) > 50 else ''}")
+            
+            # チャンネル取得・検証
+            try:
+                channel_id = int(DISCORD_CHANNEL_ID)
+            except ValueError as ve:
+                raise DiscordAPIError(f"Invalid DISCORD_CHANNEL_ID format: {DISCORD_CHANNEL_ID}") from ve
+                
+            channel = self.get_channel(channel_id)
+            if not channel:
+                raise DiscordAPIError(
+                    f"Failed to access Discord channel {channel_id}. "
+                    f"Verify bot permissions and channel existence."
+                )
+            
+            # メッセージフォーマット・検証
+            formatted_message = self._format_discord_message(idea)
+            
+            if len(formatted_message) > 2000:
+                logger.error(f"❌ Formatted message exceeds Discord limit: {len(formatted_message)} chars")
+                raise DiscordAPIError("Message formatting failed: exceeds 2000 character limit")
+            
+            # Discord API投稿実行
+            message_obj = await channel.send(formatted_message)
+            
+            logger.info(f"✅ Successfully posted to Discord")
+            logger.info(f"📊 Message stats: {len(formatted_message)} chars, ID: {message_obj.id}")
+            
+        except DiscordAPIError:
+            # DiscordAPIError は再発生 (Fail-Fast)
+            raise
+            
+        except Exception as e:
+            error_msg = f"Unexpected error during Discord posting: {e}"
+            logger.error(f"❌ {error_msg}")
+            
+            # 詳細エラー分類
+            if "HTTPException" in str(type(e)):
+                error_msg = f"Discord API HTTP error: {e}"
+            elif "Forbidden" in str(e):
+                error_msg = f"Discord bot lacks permissions: {e}"
+            elif "NotFound" in str(e):
+                error_msg = f"Discord channel not found: {e}"
+            
+            raise DiscordAPIError(error_msg) from e
 
 
 def main() -> None:

@@ -43,7 +43,7 @@ Claude Code は次の原則を**絶対基準**として実装に従う。コー�
 1. Brave Search、公式ドキュメント、GitHub を一次情報源として調査  
 2. `.env`, `Dockerfile`, CI 設定、依存ライブラリ、`settings.py` を確認  
 3. Context7（mcp） に調査内容を蓄積・整理し、Claude（Use Subagent）で役割分担  
-4. 過去ログ `_docs/dev-log/`（`yyyy-mm-dd_機能名.md`）を全読み込みし、既存の設計意図・副作用を把握
+4. 過去ログ `_docs/dev-log/`（`yyyy-mm-dd_hh-mm_機能名.md`）を全読み込みし、既存の設計意図・副作用を把握
 
 ---
 
@@ -83,7 +83,7 @@ Claude Code は次の原則を**絶対基準**として実装に従う。コー�
    - タスク全文（箇条書き内容を含む）を `_docs/dev-log/` に移動して履歴化
 
 2. **実装ログを作成**  
-   - `_docs/dev-log/yyyy-mm-dd_機能名.md` を新規作成  
+   - `_docs/dev-log/yyyy-mm-dd_hh-mm_機能名.md` を新規作成  
    - 以下を簡潔に記載  
      - 完了タスク全文  
      - 実装の背景  
@@ -111,7 +111,7 @@ Claude Code は次の原則を**絶対基準**として実装に従う。コー�
 1. すべてのタスクについて統合テスト (`pytest` 全体) を実行  
 2. 全コードに `black --check`, `flake8`, `mypy` を適用し合格を確認  
 3. 合格したタスクを `todo.md` で ✅ に更新し、該当タスク全文を  
-   `_docs/dev-log/yyyy-mm-dd_機能名.md` に移動して以下を記録：  
+   `_docs/dev-log/yyyy-mm-dd_hh-mm_機能名.md` に移動して以下を記録：  
    - タスク全文  
    - 実装の背景  
    - 設計意図  
