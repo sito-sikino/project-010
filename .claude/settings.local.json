@@ -10,7 +10,10 @@
       "Bash(pip --version)",
       "Bash(pip install:*)",
       "Bash(pip index versions:*)",
-      "Bash(pytest:*)"
+      "Bash(pytest:*)",
+      "mcp__serena__find_symbol",
+      "Bash(python:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

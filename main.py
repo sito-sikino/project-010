@@ -6,13 +6,14 @@ Fail-Fast原則に基づく例外管理とカスタムエラー処理
 """
 
 import discord
-from discord.ext import commands
-from settings import DISCORD_BOT_TOKEN, GITHUB_TOKEN, OBSIDIAN_REPO_OWNER, OBSIDIAN_REPO_NAME, RANDOM_NOTES_COUNT, GEMINI_API_KEY, IDEA_MAX_LENGTH, DISCORD_CHANNEL_ID
+from discord.ext import commands, tasks
+from settings import DISCORD_BOT_TOKEN, GITHUB_TOKEN, OBSIDIAN_REPO_OWNER, OBSIDIAN_REPO_NAME, RANDOM_NOTES_COUNT, GEMINI_API_KEY, IDEA_MAX_LENGTH, DISCORD_CHANNEL_ID, POSTING_INTERVAL
 import logging
 from typing import Optional, List
 from github import Github
 import random
 import google.genai as genai
+import time
 
 
 # 構造化ログ設定
@@ -98,6 +99,11 @@ class DiscordIdeaBot(commands.Bot):
                 logger.info(f'🔗 Connected to {len(self.guilds)} servers')
             else:
                 logger.warning('⚠️  Bot ready event triggered (user info not available)')
+            
+            # スケジューラータスク開始 (Bot ready後)
+            if not self.generate_and_post_idea.is_running():
+                self.generate_and_post_idea.start()
+                logger.info("🔄 Scheduled task started after bot ready")
                 
         except Exception as e:
             logger.error(f"Error in on_ready event: {e}")
@@ -382,6 +388,95 @@ class DiscordIdeaBot(commands.Bot):
                 error_msg = f"Discord channel not found: {e}"
             
             raise DiscordAPIError(error_msg) from e
+
+    @tasks.loop(minutes=POSTING_INTERVAL)
+    async def generate_and_post_idea(self) -> None:
+        """
+        統合フロー: GitHub→Gemini→Discord
+        
+        10分間隔での自動アイデア生成・投稿実行
+        Fail-Fast原則により、各段階でのエラーは即座に停止
+        処理時間計測・詳細ログ出力・段階的エラー分類
+        
+        Raises:
+            GitHubAPIError: GitHub API関連エラー
+            GeminiAPIError: Gemini API関連エラー  
+            DiscordAPIError: Discord API関連エラー
+        """
+        flow_start_time = time.time()
+        current_loop = self.generate_and_post_idea.current_loop + 1
+        
+        try:
+            logger.info(f"🔄 Starting scheduled flow #{current_loop} (interval: {POSTING_INTERVAL}min)")
+            
+            # 段階1: GitHub API - ランダムノート取得
+            step1_start = time.time()
+            logger.info("📁 Phase 1/3: Fetching random notes from GitHub...")
+            notes = await self.get_random_notes()
+            step1_time = time.time() - step1_start
+            logger.info(f"✅ Phase 1 completed: {len(notes)} notes loaded ({step1_time:.2f}s)")
+            
+            # 段階2: Gemini API - アイデア生成
+            step2_start = time.time()
+            logger.info("🧠 Phase 2/3: Generating creative idea with Gemini...")
+            idea = await self.generate_idea(notes)
+            step2_time = time.time() - step2_start
+            logger.info(f"✅ Phase 2 completed: {len(idea)} chars idea generated ({step2_time:.2f}s)")
+            
+            # 段階3: Discord API - 投稿
+            step3_start = time.time()
+            logger.info("💬 Phase 3/3: Posting idea to Discord...")
+            await self.post_to_discord(idea)
+            step3_time = time.time() - step3_start
+            logger.info(f"✅ Phase 3 completed: idea posted to Discord ({step3_time:.2f}s)")
+            
+            # 統合フロー完了統計
+            total_time = time.time() - flow_start_time
+            logger.info(f"🎉 Scheduled flow #{current_loop} completed successfully")
+            logger.info(f"📊 Performance: Total {total_time:.2f}s (GitHub:{step1_time:.1f}s, Gemini:{step2_time:.1f}s, Discord:{step3_time:.1f}s)")
+            
+        except GitHubAPIError as e:
+            total_time = time.time() - flow_start_time
+            logger.error(f"❌ Flow #{current_loop} failed at Phase 1 (GitHub): {e} ({total_time:.2f}s)")
+            raise  # Fail-Fast: GitHub API失敗時は即座停止
+            
+        except GeminiAPIError as e:
+            total_time = time.time() - flow_start_time
+            logger.error(f"❌ Flow #{current_loop} failed at Phase 2 (Gemini): {e} ({total_time:.2f}s)")
+            raise  # Fail-Fast: Gemini API失敗時は即座停止
+            
+        except DiscordAPIError as e:
+            total_time = time.time() - flow_start_time
+            logger.error(f"❌ Flow #{current_loop} failed at Phase 3 (Discord): {e} ({total_time:.2f}s)")
+            raise  # Fail-Fast: Discord API失敗時は即座停止
+            
+        except Exception as e:
+            total_time = time.time() - flow_start_time
+            logger.error(f"❌ Flow #{current_loop} failed with unexpected error: {e} ({total_time:.2f}s)")
+            # 予期しないエラーもFail-Fastで処理
+            raise DiscordAPIError(f"Unexpected error in scheduled flow: {e}") from e
+
+    @generate_and_post_idea.before_loop
+    async def before_generate_and_post_idea(self) -> None:
+        """
+        スケジュールタスク開始前処理
+        
+        Discord Bot Ready状態まで待機し、初期化完了確認
+        API疎通確認・設定値ログ出力
+        """
+        logger.info("⏳ Scheduler initialization: waiting for bot ready state...")
+        await self.wait_until_ready()
+        
+        logger.info("🚀 Bot ready state confirmed, starting scheduled task setup")
+        logger.info(f"⚙️  Scheduler configuration:")
+        logger.info(f"   - Interval: {POSTING_INTERVAL} minutes")
+        logger.info(f"   - Random notes count: {RANDOM_NOTES_COUNT}")
+        logger.info(f"   - Idea max length: {IDEA_MAX_LENGTH} chars")
+        logger.info(f"   - Target Discord channel: {DISCORD_CHANNEL_ID}")
+        
+        # 初回実行通知
+        logger.info("🎯 First scheduled execution will begin shortly...")
+        logger.info(f"📅 Subsequent executions every {POSTING_INTERVAL} minutes")
 
 
 def main() -> None:
