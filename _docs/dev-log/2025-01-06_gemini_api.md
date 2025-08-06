@@ -1,0 +1,126 @@
+# Gemini API連携実装完了
+
+**実装日**: 2025-01-06  
+**TDDサイクル**: Red → Green → Refactor → Commit  
+
+## 完了タスク全文
+
+### タスク5: Gemini API連携実装
+**目標**: ノート断片から創作アイデア生成  
+**TDDサイクル**: Red → Green → Refactor → Commit  
+
+#### チェックリスト:
+- [x] **Red**: `tests/test_gemini_api.py` でテスト作成 (失敗状態)
+  - [x] `test_gemini_client_initialization()` - Geminiクライアント初期化テスト
+  - [x] `test_generate_idea()` - アイデア生成テスト (モック使用)
+  - [x] `test_prompt_formatting()` - プロンプト整形テスト
+  - [x] `test_api_error_handling()` - API制限エラー処理テスト
+- [x] **Green**: Gemini API連携の最小実装  
+  - [x] `genai.Client()` でクライアント初期化 (環境変数 GEMINI_API_KEY)
+  - [x] プロンプトテンプレート作成 (ノート断片組み合わせ指示)
+  - [x] `client.models.generate_content()` でアイデア生成
+  - [x] レスポンステキスト抽出・整形
+- [x] **Refactor**: プロンプト最適化・エラーハンドリング
+  - [x] カスタム例外 `GeminiAPIError` 定義
+  - [x] API制限エラー処理 (ResourceExhaustedException対応)
+  - [x] アイデア生成プロンプトの改善 (「物語の基礎コンセプト案」特化)
+  - [x] レスポンス内容の品質チェック (最小文字数, 不適切内容フィルタ)
+- [x] **Commit**: Git コミット + dev-log作成
+
+## 実装の背景
+
+Discord LLM BotのGemini API統合において、以下の課題を解決：
+
+1. **創作アイデア生成**: Obsidianノート断片の創造的組み合わせ
+2. **プロンプトエンジニアリング**: 高品質アイデア生成のための指示設計
+3. **品質管理**: 生成内容の長さ・品質チェック機能
+
+## 設計意図
+
+### Gemini API統合アーキテクチャ
+```python
+DiscordIdeaBot
+├── gemini_client (google.genai.Client)
+├── _format_idea_prompt() - 専門的プロンプト整形
+└── generate_idea() - アイデア生成・品質チェック
+```
+
+### プロンプトエンジニアリング戦略
+```python
+prompt = f"""あなたは創作物語のアイデア生成の専門家です。以下のObsidianノート断片を参考に、魅力的な物語コンセプトを1つ生成してください。
+
+【ノート断片】
+{notes_text}
+
+【生成ルール】
+✅ 物語の核となる独創的なアイデア・コンセプトを提示
+✅ 複数のノート要素を創造的に組み合わせて発展
+✅ 読者の興味を引く具体的な設定・キャラクター・世界観を含む
+✅ 簡潔で魅力的な日本語（{IDEA_MAX_LENGTH}文字以内）
+✅ 「〜物語」「〜の話」などの決まり文句を避け、直接的な表現で"""
+```
+
+### 品質管理システム
+```python
+# API呼び出し設定
+config={
+    'temperature': 0.8,  # 創造性を高める
+    'max_output_tokens': 1000,
+    'top_p': 0.9,
+    'top_k': 40
+}
+
+# 品質チェック
+if len(idea) < 10:
+    return "短すぎるアイデアが生成されました。再試行してください。"
+```
+
+## 副作用・注意点
+
+1. **Gemini API制限**
+   - 無料枠: 200 req/day（本プロジェクトは144 req/day）
+   - レート制限・認証エラーの詳細処理実装
+   - API キー設定必須
+
+2. **プロンプト品質依存**
+   - ノート断片の質がアイデア品質に直結
+   - 5件以上のノート断片で最大5件に制限
+   - 空ノート時のフォールバック処理
+
+3. **レスポンス品質管理**
+   - 最小文字数チェック（10文字未満は再生成要求）
+   - 最大文字数制限（IDEA_MAX_LENGTH: 500文字）
+   - 空レスポンス・エラーレスポンスの安全処理
+
+4. **google-genaiパッケージ使用**
+   - `genai.Client(api_key=GEMINI_API_KEY)` 形式
+   - `client.models.generate_content()` メソッド使用
+   - gemini-2.0-flash-exp モデル指定
+
+## 関連ファイル・関数
+
+### 修正ファイル
+- `main.py`: Gemini API統合機能追加
+- `tests/test_gemini_api.py`: Gemini API機能テスト
+
+### 新規追加
+- `class GeminiAPIError(Exception)`: Gemini API専用例外
+- `def _format_idea_prompt()`: プロンプトエンジニアリング
+- `async def generate_idea()`: アイデア生成・品質管理
+
+### 依存関係追加
+- `import google.genai as genai`: Google Gemini SDK
+- `from settings import GEMINI_API_KEY, IDEA_MAX_LENGTH`: 設定値拡張
+
+## 受け入れ条件達成状況
+
+- ✅ `pytest tests/test_gemini_api.py` が全て合格
+- ✅ 複数ノート断片から創作アイデア（物語コンセプト）生成成功
+- ✅ API制限エラー時は Fail-Fast で停止確認（実装済み）
+
+## 次のタスクへの影響
+
+Task 6（Discord投稿機能）で `generate_idea()` の戻り値を使用してDiscord投稿。
+Task 7（スケジューラー統合）でGitHub→Gemini→Discordの完全統合フロー完成予定。
+
+これでBot機能の核心部分（データ取得→AI生成→投稿準備）が完成。
