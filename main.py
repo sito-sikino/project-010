@@ -244,36 +244,58 @@ class DiscordIdeaBot(commands.Bot):
 
     def _format_idea_prompt(self, notes: List[str]) -> str:
         """
-        完全オリジナル創作要素生成プロンプト整形
+        完全オリジナル創作要素生成プロンプト整形（思考プロセス可視化対応）
         
         既存作品分析から抽象化→醸成→完全オリジナル構築のプロセスを実行
-        既存の固有名詞を一切使用せず、ログライン・世界観・主要キャラクター(最大3名)を500文字で生成
+        思考過程を段階的に明示し、ログで詳細な推論プロセスを確認可能
+        既存の固有名詞を一切使用せず、ログライン・世界観・主要キャラクター(最大3名)を生成
         
         Args:
             notes: Obsidianノート断片のリスト（既存作品分析情報）
             
         Returns:
-            str: 抽象化→醸成→完全オリジナル創造プロセス指定のGeminiプロンプト
+            str: 思考プロセス明示+抽象化→醸成→完全オリジナル創造プロセス指定のGeminiプロンプト
         """
         # ノート断片を整形・結合（全量処理でGemini 2.0の大容量活用）
-        notes_text = "\n\n---\n\n".join(notes[:5])  # 最大5件の既存作品分析データ
+        notes_text = "\n\n---\n\n".join(notes[:3])  # 最大3件の既存作品分析データ
         
         prompt = f"""以下のObsidianノート情報を参考に、完全オリジナルな物語の基礎コンセプト案を1つ生成してください。
 
-【ノート断片】
+【ノート情報】
 {notes_text}
 
-【重要：抽象化プロセス】
-1. 各ノート断片から「テーマ・世界観・ストーリー・モチーフ・象徴体系・備考」情報を抽出
-2. 抽出した要素を抽象化して自由に再構築し、全く新しい世界観・設定・キャラクターを創造
+【思考プロセス要求】
+以下の段階を明確に分けて、詳細な推論過程を示してください：
+
+**STEP1: ノート分析**
+各ノートから抽出した主要な「テーマ・世界観・ストーリー・モチーフ・象徴体系・備考」要素を列挙
+
+**STEP2: 抽象化プロセス**  
+抽出要素を概念レベルまで抽象化（固有名詞・具体的設定を除去し、本質的テーマ・構造・関係性のみ抽出）
+
+**STEP3: 組み合わせ推論**
+抽象化された要素同士をどのように組み合わせ、新しい概念体系を構築するかの判断理由
+
+**STEP4: コンセプト開発**
+組み合わせから生まれる独創的な世界観・キャラクター・ストーリー核心の創造過程
+
+---
 
 【生成ルール】
 ✅ 既存作品の固有名詞・キャラクター・概念・組織名は絶対に使用しない
 ✅ 抽象化された概念から独創的な新要素を創造
 ✅ 完全オリジナルのログライン・世界観・キャラクターを構築
-✅ 簡潔で魅力的な日本語（{IDEA_MAX_LENGTH}文字以内）
+✅ 簡潔で魅力的な日本語（最終出力は{IDEA_MAX_LENGTH}文字以内）
 
-【出力フォーマット】
+【重要：出力形式の厳守】
+必ず以下の手順で出力してください：
+
+1. まず思考プロセス（STEP1-4）を詳細に記載
+2. その後、必ず「**FINAL_OUTPUT**」という区切りを記載  
+3. 最後に最終出力のみを記載
+
+【最終出力フォーマット（必須）】
+**FINAL_OUTPUT**
 **ログライン**：[1行で物語の核心を表現]
 
 **世界観**：[独創的な舞台設定・時代背景]
@@ -283,20 +305,173 @@ class DiscordIdeaBot(commands.Bot):
 2. [重要キャラ2の名前・役割・特徴]  
 3. [重要キャラ3の名前・役割・対立軸]
 
-**ログライン**："""
+重要：思考プロセスと最終出力を「**FINAL_OUTPUT**」で明確に区切ってください。"""
         
         return prompt
 
+    def _extract_thinking_process(self, response_text: str) -> tuple[str, str]:
+        """
+        Geminiレスポンスから思考プロセスと最終出力を分離（堅牢性強化版）
+        
+        STEP1-4の思考プロセスとFINAL_OUTPUTセクションを分離し、
+        Geminiの不安定な出力フォーマットに対しても確実に分離処理を実行
+        
+        Args:
+            response_text: Gemini APIからの生レスポンステキスト
+            
+        Returns:
+            tuple[str, str]: (思考プロセス部分, 最終出力部分)
+        """
+        try:
+            # Phase 1: 優先度順の分割パターンで検出
+            split_patterns = [
+                "**FINAL_OUTPUT**",
+                "【最終出力】", 
+                "## 最終出力",
+                "**ログライン**：",
+                "**ログライン**:",
+                "■ログライン:",
+                "ログライン：",
+                "ログライン:",
+            ]
+            
+            thinking_process = ""
+            final_output = ""
+            
+            for pattern in split_patterns:
+                if pattern in response_text:
+                    if "ログライン" in pattern:
+                        # ログライン以降を最終出力として扱う
+                        logline_index = response_text.find(pattern)
+                        thinking_process = response_text[:logline_index].strip()
+                        final_output = response_text[logline_index:].strip()
+                    else:
+                        # 通常の分割処理
+                        parts = response_text.split(pattern, 1)
+                        thinking_process = parts[0].strip()
+                        final_output = parts[1].strip() if len(parts) > 1 else ""
+                    
+                    logger.info(f"✅ Found separator pattern: {pattern}")
+                    break
+            
+            # Phase 2: パターンが見つからない場合の高度なコンテンツ分析
+            if not final_output:
+                logger.warning("⚠️  No separator pattern found, analyzing content structure...")
+                
+                # 最終出力マーカーの検索（拡張版）
+                final_markers = [
+                    "**ログライン**", "**世界観**", "**主要キャラクター**",
+                    "■ログライン", "■世界観", "■主要キャラクター",
+                    "ログライン", "世界観", "主要キャラクター",
+                    "物語コンセプト", "設定", "キャラクター"
+                ]
+                
+                marker_positions = []
+                for marker in final_markers:
+                    pos = response_text.find(marker)
+                    if pos >= 0:
+                        marker_positions.append(pos)
+                
+                if marker_positions:
+                    # 最初の最終出力マーカー以降を最終出力とする
+                    split_pos = min(marker_positions)
+                    thinking_process = response_text[:split_pos].strip()
+                    final_output = response_text[split_pos:].strip()
+                    logger.info(f"✅ Content structure analysis successful, split at position {split_pos}")
+                else:
+                    logger.warning("⚠️  No content structure markers found, using emergency fallback...")
+                    
+                    # Phase 3: 緊急時フォールバック - STEPパターン終了位置を検出
+                    step_end_patterns = ["STEP4:", "**STEP4:", "4."]
+                    step_end_pos = -1
+                    
+                    for step_pattern in step_end_patterns:
+                        pos = response_text.find(step_pattern)
+                        if pos >= 0:
+                            # STEP4の終了位置を探す（次の段落まで）
+                            step_content_start = pos + len(step_pattern)
+                            next_double_newline = response_text.find("\n\n", step_content_start)
+                            if next_double_newline > 0:
+                                step_end_pos = next_double_newline
+                                break
+                    
+                    if step_end_pos > 0:
+                        thinking_process = response_text[:step_end_pos].strip()
+                        final_output = response_text[step_end_pos:].strip()
+                        logger.info(f"🆘 Emergency fallback successful, split after STEP4 at position {step_end_pos}")
+                    else:
+                        # 最終的フォールバック: 全体を最終出力として扱う（ただし思考プロセス警告）
+                        logger.error("❌ All extraction methods failed, treating entire response as final output")
+                        thinking_process = ""
+                        final_output = response_text.strip()
+            
+            # Phase 4: 最終出力品質検証と安全チェック
+            if final_output:
+                # 思考プロセスが混入していないかの緊急チェック
+                thinking_contamination = any(marker in final_output for marker in [
+                    "**STEP1:", "**STEP2:", "**STEP3:", "**STEP4:",
+                    "ノート分析", "抽象化プロセス", "組み合わせ推論", "コンセプト開発"
+                ])
+                
+                if thinking_contamination:
+                    logger.error("🚨 CRITICAL: Thinking process detected in final output!")
+                    logger.error("🔧 Attempting emergency cleanup...")
+                    
+                    # 緊急クリーンアップ: 最終出力形式の箇所のみを抽出
+                    cleanup_markers = ["**ログライン**", "■ログライン", "ログライン"]
+                    for marker in cleanup_markers:
+                        if marker in final_output:
+                            marker_pos = final_output.find(marker)
+                            cleaned_output = final_output[marker_pos:].strip()
+                            # 思考プロセス要素が残っていないかチェック
+                            if not any(contam in cleaned_output for contam in ["STEP", "ノート分析", "抽象化"]):
+                                final_output = cleaned_output
+                                logger.info("✅ Emergency cleanup successful")
+                                break
+                    else:
+                        # クリーンアップ失敗時のエラーメッセージ返却
+                        logger.error("💥 Emergency cleanup failed - returning error message")
+                        thinking_process = response_text[:500] + "..."  # デバッグ用に一部保存
+                        final_output = "アイデア生成でフォーマットエラーが発生しました。しばらく待ってからお試しください。"
+                
+                # 出力形式完全性チェック
+                has_logline = any(marker in final_output for marker in ["ログライン", "物語", "コンセプト"])
+                has_worldview = any(marker in final_output for marker in ["世界観", "設定", "舞台"])
+                has_characters = any(marker in final_output for marker in ["キャラクター", "登場人物", "主人公"])
+                format_score = sum([has_logline, has_worldview, has_characters])
+                
+                logger.info(f"📝 Final output format completeness: {format_score}/3 sections")
+                logger.info(f"🔍 Final output length: {len(final_output)} chars")
+                
+                if format_score == 0:
+                    logger.warning("⚠️  Final output may be incomplete or malformed")
+            
+            # 思考プロセス品質チェック
+            if thinking_process:
+                step_count = sum(1 for step in ["STEP1:", "STEP2:", "STEP3:", "STEP4:"] 
+                               if step in thinking_process)
+                logger.info(f"🧠 Extracted thinking process with {step_count}/4 steps")
+            
+            return thinking_process, final_output
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to extract thinking process: {e}")
+            # 緊急フォールバック: エラーメッセージを最終出力として返す
+            return "", "アイデア生成処理でエラーが発生しました。しばらく待ってからお試しください。"
+
     async def generate_idea(self, notes: List[str], note_titles: List[str]) -> str:
         """
-        Gemini API経由でアイデア生成
+        Gemini API経由でアイデア生成（思考プロセス可視化対応・ログ最適化版）
+        
+        Geminiから思考プロセスと最終出力を分離し、
+        重要な推論過程をクリーンなログで記録して、最終出力のみを返却
         
         Args:
             notes: Obsidianノート断片のリスト
             note_titles: ノートファイル名のリスト
             
         Returns:
-            str: 生成された創作アイデア
+            str: 最終出力部分のみ（Discord投稿用）
             
         Raises:
             GeminiAPIError: Gemini API関連エラー
@@ -308,14 +483,13 @@ class DiscordIdeaBot(commands.Bot):
             
             logger.info(f"🧠 Generating idea from {len(notes)} notes")
             
-            # 使用ノート詳細をログに記録（タイトル付き）
-            for i, (note, title) in enumerate(zip(notes, note_titles)):
-                logger.info(f"📝 Note {i+1}: {title} ({len(note)} chars)")
+            # 使用ノート概要をログに記録（簡潔版）
+            note_info = [f"{title}({len(note)}chars)" for note, title in zip(notes, note_titles)]
+            logger.info(f"📝 Input notes: {' | '.join(note_info)}")
             
             # プロンプト整形
             prompt = self._format_idea_prompt(notes)
-            logger.info(f"📋 Generated prompt: {len(prompt)} characters")
-            logger.debug(f"📋 Full prompt content: {prompt}")
+            logger.info(f"📋 Prompt generated: {len(prompt)} chars")
             
             # Gemini API呼び出し
             response = self.gemini_client.models.generate_content(
@@ -323,7 +497,7 @@ class DiscordIdeaBot(commands.Bot):
                 contents=prompt,
                 config={
                     'temperature': 0.8,  # 創造性を高める
-                    'max_output_tokens': 1000,
+                    'max_output_tokens': 2000,  # 思考プロセス分を増量
                     'top_p': 0.9,
                     'top_k': 40
                 }
@@ -334,25 +508,63 @@ class DiscordIdeaBot(commands.Bot):
                 logger.warning("⚠️  Empty response from Gemini API")
                 return "アイデア生成に失敗しました。しばらく待ってからお試しください。"
             
-            idea = response.text.strip()
+            full_response = response.text.strip()
+            logger.info(f"📜 Received response: {len(full_response)} chars")
             
-            # 品質チェック
-            if len(idea) < 10:
-                logger.warning(f"⚠️  Generated idea too short: {len(idea)} chars")
+            # 思考プロセスと最終出力を分離
+            thinking_process, final_output = self._extract_thinking_process(full_response)
+            
+            # 分離結果概要ログ
+            logger.info(f"🔄 Processing: thinking({len(thinking_process)}) → final({len(final_output)}) chars")
+            
+            # 思考プロセスの詳細ログ記録（可視化対応）
+            if thinking_process:
+                logger.info("=" * 70)
+                logger.info("🧠 GEMINI思考プロセス詳細:")
+                logger.info("=" * 70)
+                
+                # STEPごとに詳細内容をログ記録
+                steps = thinking_process.split("**STEP")
+                for i, step in enumerate(steps):
+                    if step.strip():
+                        step_content = ("**STEP" + step) if i > 0 else step
+                        # 各STEPの詳細を制限付きで表示（冗長さを避けつつ可視化）
+                        display_content = step_content.strip()
+                        
+                        if len(display_content) > 1500:
+                            # 長い場合は最初の1000文字 + 最後の200文字を表示
+                            truncated = display_content[:1000] + "\n...[中略]...\n" + display_content[-200:]
+                            logger.info(f"🔍 思考段階 {i if i == 0 else i}: {truncated}")
+                        else:
+                            logger.info(f"🔍 思考段階 {i if i == 0 else i}: {display_content}")
+                        
+                        # 各STEPの分析統計
+                        if i > 0:  # STEP1-4のみ
+                            note_analysis_count = display_content.count("**ノート") + display_content.count("ノート1") + display_content.count("ノート2") + display_content.count("ノート3")
+                            if note_analysis_count > 0:
+                                logger.info(f"   📊 分析要素数: {note_analysis_count}件")
+                
+                logger.info("=" * 70)
+                logger.info("🎯 思考プロセス記録完了")
+                logger.info("=" * 70)
+            else:
+                logger.warning("⚠️  No thinking process extracted")
+            
+            # 最終出力品質チェック
+            if not final_output or len(final_output) < 10:
+                logger.warning(f"⚠️  Final output too short: {len(final_output)} chars")
                 return "短すぎるアイデアが生成されました。再試行してください。"
             
-            # 長さ制限チェック
-            if len(idea) > IDEA_MAX_LENGTH:
-                logger.info(f"✂️  Truncating idea from {len(idea)} to {IDEA_MAX_LENGTH} chars")
-                idea = idea[:IDEA_MAX_LENGTH - 3] + "..."
+            # 長さ制限チェック（最終出力のみ）
+            if len(final_output) > IDEA_MAX_LENGTH:
+                logger.info(f"✂️  Truncating from {len(final_output)} to {IDEA_MAX_LENGTH} chars")
+                final_output = final_output[:IDEA_MAX_LENGTH - 3] + "..."
             
-            logger.info(f"✨ Successfully generated idea: {len(idea)} characters")
-            logger.info(f"💡 Generated content: {idea}")
+            # 最終出力プレビュー（簡潔版）
+            preview = final_output.replace('\n', ' ')[:100]
+            logger.info(f"✨ Generated: {preview}{'...' if len(final_output) > 100 else ''}")
             
-            # 生成コンセプトのログ記録
-            logger.info(f"📖 Generated story concept: {idea[:200]}{'...' if len(idea) > 200 else ''}")
-            
-            return idea
+            return final_output
             
         except Exception as e:
             error_msg = f"Failed to generate idea with Gemini API: {e}"

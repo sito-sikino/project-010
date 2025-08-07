@@ -44,8 +44,8 @@ DISCORD_CHANNEL_ID: Optional[str] = os.getenv('DISCORD_CHANNEL_ID')
 
 # アイデア生成設定 (アプリケーション設定)
 POSTING_INTERVAL_MINUTES: int = 10  # 投稿間隔（分）
-RANDOM_NOTES_COUNT: int = 5         # 取得するノート数
-IDEA_MAX_LENGTH: int = 500          # アイデア最大文字数
+RANDOM_NOTES_COUNT: int = 3         # 取得するノート数
+IDEA_MAX_LENGTH: int = 600          # アイデア最大文字数
 
 # Obsidianノート取得設定 (環境変数 or デフォルト値)
 TARGET_FOLDER: Optional[str] = os.getenv('TARGET_FOLDER', '20_Literature')  # 対象フォルダ
